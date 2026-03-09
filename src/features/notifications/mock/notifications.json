@@ -1,0 +1,171 @@
+[
+  {
+    "id": "1",
+    "status": "new",
+    "statusCategory": "task",
+    "type": "ticket_assigned",
+    "typeLabel": "New Ticket Assigned",
+    "message": "You have been assigned to ticket #1234 - Website Redesign. This ticket covers the full redesign of the marketing site including new components and responsive layouts. Please review the acceptance criteria and update the status when you start working on it.",
+    "timeAgo": "5 minutes ago",
+    "from": {
+      "name": "Project Manager",
+      "avatarUrl": "/image/avatar_girl.png"
+    },
+    "createdAt": null
+  },
+  {
+    "id": "2",
+    "status": "new",
+    "statusCategory": "message",
+    "type": "permission_request",
+    "typeLabel": "Requesting access permission",
+    "message": "QA Engineer requested access to the Website Redesign project. They need read access to run E2E tests against the staging environment. You can approve or deny this request from the team settings page.",
+    "timeAgo": "12 minutes ago",
+    "from": { "name": "QA Engineer", "avatarUrl": "/image/avatar_men.png" },
+    "action": { "label": "Accept" },
+    "createdAt": null
+  },
+  {
+    "id": "3",
+    "status": "read",
+    "statusCategory": "task",
+    "type": "system",
+    "typeLabel": "System update",
+    "message": "Scheduled maintenance on Feb 28, 2025 02:00–04:00 UTC. During this window the API and dashboard may be briefly unavailable. We recommend saving your work and avoiding deployments during this period.",
+    "timeAgo": "1 hour ago",
+    "from": { "name": "System", "avatarUrl": "/image/avatar_girl.png" },
+    "createdAt": null
+  },
+  {
+    "id": "4",
+    "status": "read",
+    "statusCategory": "review_pr",
+    "type": "mention",
+    "typeLabel": "PR review requested",
+    "message": "You were mentioned in PR #56 - Auth refactor. The author is asking for your review on the new session handling and middleware changes. Please leave feedback by end of day if possible.",
+    "timeAgo": "2 hours ago",
+    "from": { "name": "Lead Developer", "avatarUrl": "/image/avatar_men.png" },
+    "createdAt": null
+  },
+  {
+    "id": "5",
+    "status": "new",
+    "statusCategory": "message",
+    "type": "mention",
+    "typeLabel": "New Message",
+    "message": "Sarah Johnson sent you a message in the Website Redesign project. She has questions about the timeline for the hero section and would like to schedule a short call this week to align on copy and assets.",
+    "timeAgo": "10 minutes ago",
+    "from": { "name": "Sarah Johnson", "avatarUrl": "/image/avatar_girl.png" },
+    "createdAt": null
+  },
+  {
+    "id": "6",
+    "status": "new",
+    "statusCategory": "task",
+    "type": "ticket_assigned",
+    "typeLabel": "Bug assigned",
+    "message": "You have been assigned bug #4578 - Login not working on Safari. Multiple users reported that the login form does not submit on Safari 17+. Please reproduce and fix; we have attached console logs and steps in the ticket.",
+    "timeAgo": "18 minutes ago",
+    "from": { "name": "Bug Tracker", "avatarUrl": "/image/avatar_men.png" },
+    "createdAt": null
+  },
+  {
+    "id": "7",
+    "status": "read",
+    "statusCategory": "message",
+    "type": "mention",
+    "typeLabel": "Comment reply",
+    "message": "Designer replied to your comment on the dashboard layout. They agreed with moving the sidebar and suggested we also increase the default width of the main content area. They left a Figma link with updated specs.",
+    "timeAgo": "35 minutes ago",
+    "from": { "name": "UI Designer", "avatarUrl": "/image/avatar_girl.png" },
+    "createdAt": null
+  },
+  {
+    "id": "8",
+    "status": "read",
+    "statusCategory": "review_pr",
+    "type": "mention",
+    "typeLabel": "PR approved",
+    "message": "Your pull request #61 - Notifications UI has been approved. The reviewer left a few minor suggestions; you can address them in a follow-up or merge as is. Great work on the accessibility and empty states.",
+    "timeAgo": "45 minutes ago",
+    "from": { "name": "Code Reviewer", "avatarUrl": "/image/avatar_men.png" },
+    "createdAt": null
+  },
+  {
+    "id": "9",
+    "status": "new",
+    "statusCategory": "task",
+    "type": "ticket_assigned",
+    "typeLabel": "Task due soon",
+    "message": "The task 'Update billing page copy' is due today. Please finalize the new pricing copy and ensure all plan names and limits are correct. Marketing has already reviewed the draft in the shared doc.",
+    "timeAgo": "20 minutes ago",
+    "from": { "name": "Planner Bot", "avatarUrl": "/image/avatar_girl.png" },
+    "createdAt": null
+  },
+  {
+    "id": "10",
+    "status": "read",
+    "statusCategory": "message",
+    "type": "mention",
+    "typeLabel": "Channel mention",
+    "message": "Marketing team mentioned you in #q1-campaign channel. They need the final CTA copy and asset dimensions for the landing page by Friday. Please reply in the thread with your availability for a quick sync.",
+    "timeAgo": "3 hours ago",
+    "from": { "name": "Marketing Lead", "avatarUrl": "/image/avatar_men.png" },
+    "createdAt": null
+  },
+  {
+    "id": "11",
+    "status": "new",
+    "statusCategory": "review_pr",
+    "type": "permission_request",
+    "typeLabel": "Review requested",
+    "message": "Frontend team requested your review on PR #72 - Dark mode. The PR adds theme support and a toggle in settings. They would appreciate feedback on the color tokens and any edge cases you can think of.",
+    "timeAgo": "25 minutes ago",
+    "from": { "name": "Frontend Team", "avatarUrl": "/image/avatar_girl.png" },
+    "createdAt": null
+  },
+  {
+    "id": "12",
+    "status": "read",
+    "statusCategory": "task",
+    "type": "system",
+    "typeLabel": "Deployment finished",
+    "message": "Production deployment #2025-02-25-01 completed successfully. All health checks passed and the new version is now live. You can view the release notes and rollback instructions in the deploy dashboard.",
+    "timeAgo": "4 hours ago",
+    "from": { "name": "Deploy Bot", "avatarUrl": "/image/avatar_men.png" },
+    "createdAt": null
+  },
+  {
+    "id": "13",
+    "status": "new",
+    "statusCategory": "message",
+    "type": "mention",
+    "typeLabel": "New comment",
+    "message": "Client left a new comment on the homepage prototype. They love the direction but asked to make the hero headline larger and to add a second CTA below the fold. They are available for a call tomorrow to discuss.",
+    "timeAgo": "8 minutes ago",
+    "from": { "name": "Client", "avatarUrl": "/image/avatar_girl.png" },
+    "createdAt": null
+  },
+  {
+    "id": "14",
+    "status": "read",
+    "statusCategory": "review_pr",
+    "type": "mention",
+    "typeLabel": "Review reminder",
+    "message": "Reminder: Please review PR #68 - Analytics integration. This PR has been open for 2 days and is blocking the analytics release. Let us know if you need more context or time to complete the review.",
+    "timeAgo": "6 hours ago",
+    "from": { "name": "Reminder Bot", "avatarUrl": "/image/avatar_men.png" },
+    "createdAt": null
+  },
+  {
+    "id": "15",
+    "status": "new",
+    "statusCategory": "task",
+    "type": "ticket_assigned",
+    "typeLabel": "New subtask assigned",
+    "message": "You have been assigned subtask 'Update notification mocks'. Please add longer sample messages to the mock data so the detail modal can be tested with multi-line content. Use 2–3 sentences per notification where appropriate.",
+    "timeAgo": "Just now",
+    "from": { "name": "Product Owner", "avatarUrl": "/image/avatar_girl.png" },
+    "createdAt": null
+  }
+]

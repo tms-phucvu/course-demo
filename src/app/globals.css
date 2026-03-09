@@ -1,0 +1,298 @@
+@import "tailwindcss";
+@config "../../tailwind.config.ts";
+
+@theme inline {
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+}
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3.9%;
+    --primary: 0 0% 9%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 0 0% 96.1%;
+    --secondary-foreground: 0 0% 9%;
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
+    --accent: 0 0% 96.1%;
+    --accent-foreground: 0 0% 9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 0 0% 3.9%;
+    --radius: 0.5rem;
+    --sidebar: 0 0% 7%;
+    --sidebar-foreground: 0 0% 98%;
+    --sidebar-border: 0 0% 14.9%;
+  }
+
+  .dark {
+    --background: 0 0% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 0 0% 9%;
+    --secondary: 0 0% 14.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 14.9%;
+    --muted-foreground: 0 0% 63.9%;
+    --accent: 0 0% 14.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 14.9%;
+    --input: 0 0% 14.9%;
+    --ring: 0 0% 83.1%;
+  }
+
+  /* Color theme presets (Tailwind-style primary accent) */
+  [data-color-theme="zinc"] {
+    --primary: 0 0% 9%;
+    --primary-foreground: 0 0% 98%;
+  }
+  [data-color-theme="red"] {
+    --primary: 0 84% 60%;
+    --primary-foreground: 0 0% 98%;
+  }
+  [data-color-theme="orange"] {
+    --primary: 25 95% 53%;
+    --primary-foreground: 0 0% 98%;
+  }
+  [data-color-theme="amber"] {
+    --primary: 38 92% 50%;
+    --primary-foreground: 0 0% 9%;
+  }
+  [data-color-theme="yellow"] {
+    --primary: 48 96% 53%;
+    --primary-foreground: 0 0% 9%;
+  }
+  [data-color-theme="lime"] {
+    --primary: 84 81% 44%;
+    --primary-foreground: 0 0% 98%;
+  }
+  [data-color-theme="green"] {
+    --primary: 142 71% 45%;
+    --primary-foreground: 0 0% 98%;
+  }
+  [data-color-theme="emerald"] {
+    --primary: 160 84% 39%;
+    --primary-foreground: 0 0% 98%;
+  }
+  [data-color-theme="teal"] {
+    --primary: 173 80% 40%;
+    --primary-foreground: 0 0% 98%;
+  }
+  [data-color-theme="cyan"] {
+    --primary: 189 94% 43%;
+    --primary-foreground: 0 0% 9%;
+  }
+  [data-color-theme="sky"] {
+    --primary: 199 89% 48%;
+    --primary-foreground: 0 0% 98%;
+  }
+  [data-color-theme="blue"] {
+    --primary: 221 83% 53%;
+    --primary-foreground: 0 0% 98%;
+  }
+  [data-color-theme="indigo"] {
+    --primary: 239 84% 67%;
+    --primary-foreground: 0 0% 98%;
+  }
+  [data-color-theme="violet"] {
+    --primary: 263 70% 50%;
+    --primary-foreground: 0 0% 98%;
+  }
+  [data-color-theme="purple"] {
+    --primary: 271 91% 65%;
+    --primary-foreground: 0 0% 98%;
+  }
+  [data-color-theme="fuchsia"] {
+    --primary: 292 84% 61%;
+    --primary-foreground: 0 0% 98%;
+  }
+  [data-color-theme="pink"] {
+    --primary: 330 81% 60%;
+    --primary-foreground: 0 0% 98%;
+  }
+  [data-color-theme="rose"] {
+    --primary: 347 77% 50%;
+    --primary-foreground: 0 0% 98%;
+  }
+  [data-color-theme="slate"] {
+    --primary: 215 28% 17%;
+    --primary-foreground: 0 0% 98%;
+  }
+  [data-color-theme="gray"] {
+    --primary: 220 9% 46%;
+    --primary-foreground: 0 0% 98%;
+  }
+  [data-color-theme="neutral"] {
+    --primary: 0 0% 25%;
+    --primary-foreground: 0 0% 98%;
+  }
+  [data-color-theme="stone"] {
+    --primary: 25 5% 45%;
+    --primary-foreground: 0 0% 98%;
+  }
+  .dark[data-color-theme="zinc"] {
+    --primary: 0 0% 98%;
+    --primary-foreground: 0 0% 9%;
+  }
+  .dark[data-color-theme="red"] {
+    --primary: 0 63% 31%;
+    --primary-foreground: 0 0% 98%;
+  }
+  .dark[data-color-theme="blue"] {
+    --primary: 217 91% 60%;
+    --primary-foreground: 0 0% 9%;
+  }
+  .dark[data-color-theme="violet"] {
+    --primary: 263 70% 50%;
+    --primary-foreground: 0 0% 98%;
+  }
+  .dark[data-color-theme="green"] {
+    --primary: 142 71% 45%;
+    --primary-foreground: 0 0% 98%;
+  }
+  .dark[data-color-theme="orange"] {
+    --primary: 25 95% 53%;
+    --primary-foreground: 0 0% 9%;
+  }
+  .dark[data-color-theme="pink"] {
+    --primary: 330 81% 60%;
+    --primary-foreground: 0 0% 98%;
+  }
+  .dark[data-color-theme="amber"] {
+    --primary: 38 92% 50%;
+    --primary-foreground: 0 0% 9%;
+  }
+  .dark[data-color-theme="cyan"] {
+    --primary: 189 94% 43%;
+    --primary-foreground: 0 0% 9%;
+  }
+  .dark[data-color-theme="indigo"] {
+    --primary: 239 84% 67%;
+    --primary-foreground: 0 0% 9%;
+  }
+  .dark[data-color-theme="purple"] {
+    --primary: 271 91% 65%;
+    --primary-foreground: 0 0% 9%;
+  }
+  .dark[data-color-theme="fuchsia"] {
+    --primary: 292 84% 61%;
+    --primary-foreground: 0 0% 9%;
+  }
+  .dark[data-color-theme="rose"] {
+    --primary: 347 77% 50%;
+    --primary-foreground: 0 0% 98%;
+  }
+  .dark[data-color-theme="emerald"] {
+    --primary: 160 84% 39%;
+    --primary-foreground: 0 0% 98%;
+  }
+  .dark[data-color-theme="teal"] {
+    --primary: 173 80% 40%;
+    --primary-foreground: 0 0% 98%;
+  }
+  .dark[data-color-theme="sky"] {
+    --primary: 199 89% 48%;
+    --primary-foreground: 0 0% 9%;
+  }
+  .dark[data-color-theme="yellow"] {
+    --primary: 48 96% 53%;
+    --primary-foreground: 0 0% 9%;
+  }
+  .dark[data-color-theme="lime"] {
+    --primary: 84 81% 44%;
+    --primary-foreground: 0 0% 9%;
+  }
+  .dark[data-color-theme="slate"] {
+    --primary: 215 28% 45%;
+    --primary-foreground: 0 0% 98%;
+  }
+  .dark[data-color-theme="gray"] {
+    --primary: 220 9% 55%;
+    --primary-foreground: 0 0% 98%;
+  }
+  .dark[data-color-theme="neutral"] {
+    --primary: 0 0% 65%;
+    --primary-foreground: 0 0% 9%;
+  }
+  .dark[data-color-theme="stone"] {
+    --primary: 25 5% 55%;
+    --primary-foreground: 0 0% 98%;
+  }
+
+  * {
+    border-color: var(--color-border);
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+  }
+
+  /* Mobile sidebar panel (Sheet/dialog): force background so it is visible */
+  [data-sidebar="sidebar"][data-mobile="true"] {
+    background-color: hsl(var(--sidebar));
+    color: hsl(var(--sidebar-foreground));
+  }
+
+  /* Sidebar menu hover: visible contrast on #F4F4F5 background */
+  .app-sidebar [data-sidebar="menu-button"]:hover,
+  .app-sidebar [data-sidebar="menu-sub-button"]:hover {
+    background-color: #e4e4e7;
+  }
+
+  /* Sidebar active state: highlight nav item for current route */
+  .app-sidebar
+    [data-sidebar="menu-item"][data-active="true"]
+    [data-sidebar="menu-button"],
+  .app-sidebar [data-sidebar="menu-item"][data-active="true"] a {
+    background-color: hsl(var(--sidebar-accent));
+    font-weight: 500;
+    color: hsl(var(--sidebar-accent-foreground));
+  }
+
+  .app-sidebar [data-sidebar="menu-sub"] li[data-active="true"] a {
+    background-color: hsl(var(--sidebar-accent));
+    font-weight: 500;
+    color: hsl(var(--sidebar-accent-foreground));
+  }
+
+  /* When sidebar is collapsed, header logo button has no padding so logo is not clipped */
+  .app-sidebar[data-state="collapsed"] .app-sidebar-header-trigger {
+    padding: 0;
+  }
+}
