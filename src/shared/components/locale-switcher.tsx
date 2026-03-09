@@ -1,8 +1,5 @@
 "use client";
 
-import { useLocale } from "next-intl";
-import { usePathname, useRouter } from "@/i18n/routing";
-import { locales, localeNames, type Locale } from "@/i18n/config";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -10,7 +7,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { localeNames, locales, type Locale } from "@/i18n/config";
+import { usePathname, useRouter } from "@/i18n/routing";
 import { Globe } from "lucide-react";
+import { useLocale } from "next-intl";
 
 export function LocaleSwitcher() {
   const locale = useLocale();
@@ -24,12 +24,12 @@ export function LocaleSwitcher() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="icon">
-          <Globe className="h-4 w-4" />
-          <span className="sr-only">Switch language</span>
+        <Button variant='outline' size='icon'>
+          <Globe className='h-4 w-4' />
+          <span className='sr-only'>Switch language</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
+      <DropdownMenuContent align='end'>
         {locales.map((loc) => (
           <DropdownMenuItem
             key={loc}

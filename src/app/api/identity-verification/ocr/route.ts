@@ -1,6 +1,6 @@
-import { NextResponse } from "next/server";
 import { mistral } from "@ai-sdk/mistral";
 import { generateText } from "ai";
+import { NextResponse } from "next/server";
 
 // Key is read from process.env.MISTRAL_API_KEY on the server only. Never use NEXT_PUBLIC_ for this key.
 export async function POST(request: Request) {

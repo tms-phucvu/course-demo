@@ -1,13 +1,7 @@
 "use client";
 
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { signIn } from "next-auth/react";
-import { useTranslations } from "next-intl";
-import { z } from "zod";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { PasswordInput } from "@/components/ui/password-input";
 import {
   Form,
   FormControl,
@@ -16,12 +10,18 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertCircle } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Link, useRouter } from "@/i18n/routing";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { AlertCircle } from "lucide-react";
+import { signIn } from "next-auth/react";
+import { useTranslations } from "next-intl";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 import { useFormState } from "../hooks";
-import { GoogleLoginButton } from "./google-login-button";
 import { FacebookLoginButton } from "./facebook-login-button";
+import { GoogleLoginButton } from "./google-login-button";
 import { InstagramLoginButton } from "./instagram-login-button";
 import { LineLoginButton } from "./line-login-button";
 import { SocialLoginDivider } from "./social-login-divider";
@@ -63,7 +63,7 @@ export function LoginForm() {
       if (result?.error) {
         formState.setError(tErrors("invalidCredentials"));
       } else {
-        router.push("/profile");
+        router.push("/home");
         router.refresh();
       }
     } catch {
