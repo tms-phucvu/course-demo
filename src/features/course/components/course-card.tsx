@@ -1,5 +1,8 @@
+import Link from "next/link";
+
 import { MetaItem } from "@/features/course/components/meta-item";
 import { Course } from "@/features/course/types/course.types";
+import { formatDuration } from "@/features/course/utils/course.utils";
 import { CirclePlay, Clock, Library } from "lucide-react";
 import Image from "next/image";
 
@@ -9,7 +12,11 @@ interface CourseCardProps {
 
 function CourseCard({ course }: CourseCardProps) {
   return (
-    <div className='group bg-card cursor-pointer overflow-hidden rounded-lg border shadow-sm transition-all duration-300 hover:scale-[1.03] hover:shadow-md'>
+    <Link
+      href={`/courses/${course.id}`}
+      className='group bg-card block overflow-hidden rounded-lg border shadow-sm transition-all duration-300 hover:scale-[1.03] hover:shadow-md'
+      aria-label={`Show course detail ${course.title}`}
+    >
       <div className='relative aspect-5/3 w-full overflow-hidden'>
         <Image
           src={course.thumbnail}
@@ -27,9 +34,9 @@ function CourseCard({ course }: CourseCardProps) {
       <div className='border-border/50 text-muted-foreground flex items-center justify-between border-t px-4 py-3 text-sm'>
         <MetaItem icon={Library} value={course.totalSections} />
         <MetaItem icon={CirclePlay} value={course.totalLessons} />
-        <MetaItem icon={Clock} value={course.totalDuration} />
+        <MetaItem icon={Clock} value={formatDuration(course.totalDuration)} />
       </div>
-    </div>
+    </Link>
   );
 }
 
