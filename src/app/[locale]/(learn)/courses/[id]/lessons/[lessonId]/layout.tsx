@@ -1,7 +1,7 @@
-interface AppLayoutProps {
+interface LessonLayoutProps {
   children: React.ReactNode;
 }
 
-export default async function AppLayout({ children }: AppLayoutProps) {
+export default async function LessonLayout({ children }: LessonLayoutProps) {
   return <div>{children}</div>;
 }

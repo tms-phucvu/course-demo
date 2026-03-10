@@ -936,3 +936,15 @@ export const MOCK_COURSES: Course[] = [
 export function getCourseById(id: string) {
   return MOCK_COURSES.find((course) => course.id === id);
 }
+
+export function getLessonById(courseId: string, lessonId: string) {
+  const course = getCourseById(courseId);
+  if (!course) return undefined;
+
+  for (const section of course.sections) {
+    const lesson = section.lessons.find((l) => l.id === lessonId);
+    if (lesson) return lesson;
+  }
+
+  return undefined;
+}
