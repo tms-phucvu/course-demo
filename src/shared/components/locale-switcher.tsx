@@ -12,7 +12,17 @@ import { usePathname, useRouter } from "@/i18n/routing";
 import { Globe } from "lucide-react";
 import { useLocale } from "next-intl";
 
-export function LocaleSwitcher() {
+export function LocaleSwitcher({
+  variantButton = "outline",
+}: {
+  variantButton?:
+    | "outline"
+    | "link"
+    | "default"
+    | "destructive"
+    | "secondary"
+    | "ghost";
+}) {
   const locale = useLocale();
   const router = useRouter();
   const pathname = usePathname();
@@ -22,9 +32,9 @@ export function LocaleSwitcher() {
   }
 
   return (
-    <DropdownMenu>
+    <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
-        <Button variant='outline' size='icon'>
+        <Button variant={variantButton} size='icon'>
           <Globe className='h-4 w-4' />
           <span className='sr-only'>Switch language</span>
         </Button>

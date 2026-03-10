@@ -22,7 +22,9 @@ export default async function AppLayout({ children, params }: AppLayoutProps) {
     <div className='bg-background relative flex min-h-screen flex-col'>
       <Header />
       <main className='flex-1'>
-        <div className='px-80'>{children}</div>
+        <div className='flex w-full justify-center px-4 sm:px-6 md:px-10 lg:px-16 xl:px-20 2xl:px-32'>
+          {children}
+        </div>
       </main>
     </div>
   );

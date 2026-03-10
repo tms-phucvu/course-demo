@@ -12,6 +12,7 @@ const nextConfig: NextConfig = {
         hostname: "*.public.blob.vercel-storage.com",
       },
     ],
+    domains: ["images.unsplash.com"],
   },
   // Optimize dev server performance
   onDemandEntries: {

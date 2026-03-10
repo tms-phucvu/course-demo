@@ -5,7 +5,7 @@
 
   // Prettier settings - ensure it uses .prettierrc.mjs
   "prettier.requireConfig": true,
-  "prettier.configPath": ".prettierrc.mjs",
+  "prettier.configPath": ".prettierrc",
   "prettier.useEditorConfig": false,
   "[javascript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"

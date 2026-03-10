@@ -50,7 +50,7 @@ export function Header() {
         {/* Right: Actions */}
         <div className='flex items-center gap-3 sm:gap-4'>
           <ThemeModeToggle />
-          <LocaleSwitcher />
+          <LocaleSwitcher variantButton='ghost' />
           <UserButton />
 
           {/* Mobile trigger */}
