@@ -8,18 +8,28 @@ import {
 } from "@/components/ui/accordion";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { cn } from "@/core/lib";
 import { Course } from "@/features/course/types/course.types";
 import { formatDuration } from "@/features/course/utils/course.utils";
 import { Link } from "@/i18n";
+import { useIsMobile } from "@/shared/hooks/use-mobile";
 import { MonitorPlay } from "lucide-react";
 import { useParams } from "next/navigation";
+import { Dispatch, SetStateAction } from "react";
 
 interface LessonSidebarProps {
   course: Course;
+  isOpen: boolean;
+  setIsOpenSidebar: Dispatch<SetStateAction<boolean>>;
 }
 
-function LessonSidebar({ course }: LessonSidebarProps) {
+function LessonSidebar({
+  course,
+  isOpen,
+  setIsOpenSidebar,
+}: LessonSidebarProps) {
+  const isMobile = useIsMobile();
   const params = useParams();
   const lessonId = params.lessonId as string;
 
@@ -27,8 +37,8 @@ function LessonSidebar({ course }: LessonSidebarProps) {
     section.lessons.some((lesson) => lesson.id === lessonId)
   )?.id;
 
-  return (
-    <aside className='fixed top-17 right-0 flex h-[calc(100vh-68px)] w-1/4 flex-col border'>
+  const sidebarContent = (
+    <>
       <div className='flex items-center justify-between border-b p-4'>
         <div>
           <h3 className='font-semibold'>Course Content</h3>
@@ -86,7 +96,36 @@ function LessonSidebar({ course }: LessonSidebarProps) {
           </Accordion>
         </div>
       </ScrollArea>
-    </aside>
+    </>
+  );
+
+  return (
+    <>
+      {isMobile ? (
+        <Sheet
+          open={isOpen}
+          onOpenChange={() => setIsOpenSidebar((prev) => !prev)}
+        >
+          <SheetContent
+            side='right'
+            className='flex h-full w-[85%] flex-col p-0 pt-10'
+          >
+            <SheetTitle className='sr-only'>Course Content</SheetTitle>
+            {sidebarContent}
+          </SheetContent>
+        </Sheet>
+      ) : (
+        <aside
+          className={cn(
+            "bg-background fixed top-17 right-0 flex h-[calc(100vh-68px)] w-1/4 flex-col border",
+            "transition-transform duration-300 ease-in-out",
+            isOpen ? "translate-x-0" : "translate-x-full"
+          )}
+        >
+          {sidebarContent}
+        </aside>
+      )}
+    </>
   );
 }
 

@@ -63,7 +63,7 @@ export default function CourseDetail({ course }: CourseDetailProps) {
           </div>
           <section className='border-border/50 bg-background space-y-3 rounded-lg border p-5'>
             <h3 className='text-xl font-semibold'>{"What You'll Learn"}</h3>
-            <div className='grid grid-cols-2 gap-2'>
+            <div className='grid gap-2 sm:grid-cols-2'>
               {course.learningOutcomes.map((outcome) => (
                 <div key={outcome} className='flex items-start gap-2'>
                   <Check className='mt-0.5 h-4 w-4 shrink-0' />

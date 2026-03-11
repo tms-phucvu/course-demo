@@ -1,5 +1,4 @@
-import LessonHeader from "@/features/course/components/lesson/lesson-header";
-import LessonSidebar from "@/features/course/components/lesson/lesson-sidebar";
+import LessonLayoutClient from "@/features/course/components/lesson/lesson-layout-client";
 import { getCourseById } from "@/features/course/mock/course-data";
 import { notFound } from "next/navigation";
 
@@ -20,15 +19,5 @@ export default async function LessonLayout({
   const course = getCourseById(courseId);
   if (!course) notFound();
 
-  return (
-    <div className='min-h-screen'>
-      <LessonHeader courseName={course.title} />
-
-      {/* Content */}
-      <div className='mt-17 mr-[25%] p-4'>{children}</div>
-
-      {/* Sidebar */}
-      <LessonSidebar course={course} />
-    </div>
-  );
+  return <LessonLayoutClient course={course}>{children}</LessonLayoutClient>;
 }
