@@ -1,11 +1,8 @@
 import { ThemeModeToggle } from "@/components/theme-mode-toggle";
-import { navConfig } from "@/core/config/nav";
-import { cn } from "@/core/lib";
 import { UserButton } from "@/features/auth";
 import { LocaleSwitcher } from "@/shared/components/locale-switcher";
 import Image from "next/image";
 import Link from "next/link";
-import { MobileNav } from "./mobile-nav";
 
 export function Header() {
   return (
@@ -29,22 +26,6 @@ export function Header() {
               TOMOSIA
             </span>
           </Link>
-
-          {/* Desktop Nav */}
-          <nav className='hidden items-center gap-6 text-sm font-medium md:flex lg:gap-8'>
-            {navConfig.mainNav.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={cn(
-                  "hover:text-foreground text-muted-foreground relative transition-colors",
-                  "after:bg-primary after:absolute after:-bottom-1.5 after:left-0 after:h-0.5 after:w-0 after:transition-all hover:after:w-full"
-                )}
-              >
-                {item.title}
-              </Link>
-            ))}
-          </nav>
         </div>
 
         {/* Right: Actions */}
@@ -52,9 +33,6 @@ export function Header() {
           <ThemeModeToggle />
           <LocaleSwitcher variantButton='ghost' />
           <UserButton />
-
-          {/* Mobile trigger */}
-          <MobileNav />
         </div>
       </div>
     </header>

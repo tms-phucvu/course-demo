@@ -14,7 +14,7 @@ function CourseCard({ course }: CourseCardProps) {
   return (
     <Link
       href={`/courses/${course.id}`}
-      className='group bg-card block overflow-hidden rounded-lg border shadow-sm transition-all duration-300 hover:scale-[1.03] hover:shadow-md'
+      className='group bg-card flex flex-col overflow-hidden rounded-lg border shadow-sm transition-all duration-300 hover:scale-[1.03] hover:shadow-md'
       aria-label={`Show course detail ${course.title}`}
     >
       <div className='relative aspect-5/3 w-full overflow-hidden'>
@@ -25,7 +25,7 @@ function CourseCard({ course }: CourseCardProps) {
           className='object-cover transition-transform duration-500 group-hover:scale-110'
         />
       </div>
-      <div className='p-4'>
+      <div className='flex-1 p-4'>
         <h3 className='line-clamp-2 leading-tight font-medium'>
           {course.title}
         </h3>

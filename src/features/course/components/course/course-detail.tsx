@@ -30,10 +30,6 @@ export default function CourseDetail({ course }: CourseDetailProps) {
       <Breadcrumb>
         <ol className='text-muted-foreground flex flex-wrap items-center gap-1.5 text-sm sm:gap-2.5'>
           <BreadcrumbItem>
-            <BreadcrumbLink href='/'>Home</BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
             <BreadcrumbLink href='/courses'>Courses</BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />

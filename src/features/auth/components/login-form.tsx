@@ -63,7 +63,7 @@ export function LoginForm() {
       if (result?.error) {
         formState.setError(tErrors("invalidCredentials"));
       } else {
-        router.push("/home");
+        router.push("/");
         router.refresh();
       }
     } catch {

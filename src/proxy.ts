@@ -8,7 +8,7 @@ import { NextResponse } from "next/server";
 const intlMiddleware = createMiddleware(routing);
 
 // 1. Specify protected and public routes
-const protectedRoutes = ["/profile", "/dashboard", "/settings", "/home"];
+const protectedRoutes = ["/profile", "/dashboard", "/settings", "/courses"];
 const authRoutes = [
   "/login",
   "/register",
@@ -53,7 +53,7 @@ export default async function proxy(req: NextRequest) {
   // 5. Redirect to /profile if the user is authenticated
   if (isAuthRoute && token) {
     const locale = pathname.match(/^\/(en|ja)/)?.[1] || "en";
-    return NextResponse.redirect(new URL(`/${locale}/home`, req.url));
+    return NextResponse.redirect(new URL(`/${locale}/courses`, req.url));
   }
 
   // 6. Handle i18n routing
