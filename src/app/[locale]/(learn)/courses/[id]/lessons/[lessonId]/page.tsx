@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 
+import LessonMain from "@/features/course/components/lesson/lesson-main";
 import {
   getCourseById,
   getLessonById,
@@ -26,5 +27,5 @@ export default async function CourseLesson({ params }: CourseLessonProps) {
     notFound();
   }
 
-  return <div>{`Lesson '${lessonId}' of course ID: ${courseId}`}</div>;
+  return <LessonMain lesson={lesson} course={course} />;
 }

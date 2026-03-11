@@ -1,4 +1,4 @@
-import CourseCard from "@/features/course/components/course-card";
+import CourseCard from "@/features/course/components/course/course-card";
 import { MOCK_COURSES } from "@/features/course/mock/course-data";
 
 function CourseList() {

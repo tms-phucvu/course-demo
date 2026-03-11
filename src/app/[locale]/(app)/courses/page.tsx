@@ -1,4 +1,4 @@
-import CourseList from "@/features/course/components/course-list";
+import CourseList from "@/features/course/components/course/course-list";
 
 function Courses() {
   return <CourseList />;

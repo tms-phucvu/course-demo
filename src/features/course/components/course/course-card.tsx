@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { MetaItem } from "@/features/course/components/meta-item";
+import { MetaItem } from "@/features/course/components/course/meta-item";
 import { Course } from "@/features/course/types/course.types";
 import { formatDuration } from "@/features/course/utils/course.utils";
 import { CirclePlay, Clock, Library } from "lucide-react";

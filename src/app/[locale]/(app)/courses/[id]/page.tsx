@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 
-import CourseDetail from "@/features/course/components/course-detail";
+import CourseDetail from "@/features/course/components/course/course-detail";
 import { getCourseById } from "@/features/course/mock/course-data";
 
 interface PageProps {
