@@ -1,7 +1,6 @@
 export interface Lesson {
   id: string;
   title: string;
-  content: string;
   videoId: string;
 
   order: number;
@@ -14,12 +13,14 @@ export interface Lesson {
 export interface Section {
   id: string;
   title: string;
-  order: number;
 
+  order: number;
   totalLessons: number;
-  courseId: string;
+  totalDuration: number;
 
   lessons: Lesson[];
+
+  courseId: string;
 }
 
 export interface Course {

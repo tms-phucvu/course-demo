@@ -55,14 +55,16 @@ function LessonSidebar({
             defaultValue={openedSectionId ? [openedSectionId] : []}
           >
             {course.sections.map((section) => (
-              <AccordionItem key={section.id} value={section.id} className=''>
-                <AccordionTrigger className='bg-muted px-4'>
+              <AccordionItem key={section.id} value={section.id}>
+                <AccordionTrigger className='bg-muted group px-4 hover:no-underline'>
                   <div className='flex flex-col'>
-                    <div className='text-lg'>
+                    <div className='text-lg group-hover:underline'>
                       {`Section ${section.order}. ${section.title}`}
                     </div>
-                    <div className='text-xs font-normal'>
-                      {`${section.totalLessons} lessons`}
+                    <div className='ml-0.5 space-x-2 text-xs font-normal'>
+                      <span>{`${section.totalLessons} lessons`}</span>
+                      <span>•</span>
+                      <span>{formatDuration(section.totalDuration)}</span>
                     </div>
                   </div>
                 </AccordionTrigger>

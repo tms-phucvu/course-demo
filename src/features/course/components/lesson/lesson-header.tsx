@@ -15,11 +15,11 @@ export default function LessonHeader({
   setIsOpenSidebar,
 }: LessonHeaderProps) {
   return (
-    <div className='bg-background fixed top-0 flex w-full flex-col items-center justify-between gap-4 px-6 py-4 shadow-2xs sm:flex-row'>
+    <div className='bg-background fixed top-0 flex w-full items-center justify-between gap-4 px-6 py-4 shadow-2xs'>
       <Link href={`../`} className='self-start'>
-        <Button variant={"outline"}>
+        <Button variant={"ghost"}>
           <ChevronLeft />
-          {courseName}
+          <span className='hidden sm:block'>{courseName}</span>
         </Button>
       </Link>
       <div className='self-end'>
@@ -36,7 +36,7 @@ export default function LessonHeader({
         </Button>
         <Button variant={"outline"} className='ml-2'>
           <MessageCircleQuestion />
-          Need help?
+          <span className='hidden sm:block'>Need help?</span>
         </Button>
       </div>
     </div>
