@@ -19,11 +19,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { cn } from "@/core/lib/utils";
+import { CourseDeleteConfirmDialog } from "@/features/course-management/components/course-delete-confirm-dialog";
 import {
   Level,
   LEVELS,
 } from "@/features/course-management/constants/course-management.constants";
-import { useCourseActions } from "@/features/course-management/hooks/use-course-actions";
+import { useCourseDelete } from "@/features/course-management/hooks/use-course-delete";
 import { useCourseFilter } from "@/features/course-management/hooks/use-course-filter";
 import { useCoursePagination } from "@/features/course-management/hooks/use-course-pagination";
 import { useCourseSelection } from "@/features/course-management/hooks/use-course-selection";
@@ -71,11 +72,11 @@ export function CourseManagement() {
     clearSelection,
   } = useCourseSelection({ pageCourses });
 
-  const { handleDeleteOne, handleDeleteSelected } = useCourseActions({
-    setCourses,
-    selectedIds,
-    clearSelection,
-  });
+  const { deleteConfirm, setDeleteConfirm, handleConfirmDelete } =
+    useCourseDelete({
+      setCourses,
+      clearSelection,
+    });
 
   return (
     <div className='CourseList mt-6 flex w-full flex-col gap-6'>
@@ -116,7 +117,9 @@ export function CourseManagement() {
           <Button
             variant='destructive'
             size='sm'
-            onClick={() => handleDeleteSelected(selectedCount)}
+            onClick={() =>
+              setDeleteConfirm({ type: "selected", selectedIds, selectedCount })
+            }
             disabled={selectedCount === 0}
           >
             <Trash2 className='mr-2 size-4' aria-hidden />
@@ -150,7 +153,7 @@ export function CourseManagement() {
             {pageCourses.length === 0 ? (
               <TableRow>
                 <TableCell
-                  colSpan={7}
+                  colSpan={8}
                   className='text-muted-foreground py-8 text-center'
                 >
                   No courses found.
@@ -227,7 +230,15 @@ export function CourseManagement() {
                         <Button
                           variant='ghost'
                           size='icon'
-                          onClick={() => handleDeleteOne(course.id)}
+                          onClick={() =>
+                            setDeleteConfirm({
+                              type: "one",
+                              id: course.id,
+                              title:
+                                courses.find((c) => c.id === course.id)
+                                  ?.title ?? "",
+                            })
+                          }
                           aria-label={`Delete ${course.title}`}
                           className='text-destructive hover:text-destructive'
                         >
@@ -242,6 +253,18 @@ export function CourseManagement() {
           </TableBody>
         </Table>
       </div>
+
+      {/* Dialog for Confirm to Delete Course */}
+      <CourseDeleteConfirmDialog
+        open={deleteConfirm !== null}
+        onOpenChange={(open) => !open && setDeleteConfirm(null)}
+        isDeletingSelected={deleteConfirm?.type === "selected"}
+        selectedCount={selectedCount}
+        deletingCourseTitle={
+          deleteConfirm?.type === "one" ? deleteConfirm.title : ""
+        }
+        onConfirm={handleConfirmDelete}
+      />
 
       {/* Pagination Section */}
       {total > 0 && (
