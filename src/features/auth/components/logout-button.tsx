@@ -8,7 +8,13 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 
 interface LogoutButtonProps {
-  variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link";
+  variant?:
+    | "default"
+    | "destructive"
+    | "outline"
+    | "secondary"
+    | "ghost"
+    | "link";
   size?: "default" | "sm" | "lg" | "icon";
   showIcon?: boolean;
   iconOnly?: boolean;
@@ -38,10 +44,10 @@ export function LogoutButton({
     return (
       <Button
         variant={variant}
-        size="icon"
+        size='icon'
         onClick={handleLogout}
         disabled={isLoading}
-        className={className}
+        className={cn(className, "flex items-center justify-center")}
         title={t("logout")}
       >
         <LogOut className={cn("h-4 w-4", isLoading && "animate-pulse")} />
@@ -57,7 +63,7 @@ export function LogoutButton({
       disabled={isLoading}
       className={className}
     >
-      {showIcon && <LogOut className="mr-2 h-4 w-4" />}
+      {showIcon && <LogOut className='mr-2 h-4 w-4' />}
       {isLoading ? t("loggingOut") : t("logout")}
     </Button>
   );

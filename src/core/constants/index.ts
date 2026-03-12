@@ -1,12 +1,7 @@
-export { DEFAULT_AVATAR_PATH } from "./common";
 export { getBreadcrumb } from "./breadcrumb";
 export type { BreadcrumbRoute } from "./breadcrumb";
-export {
-  accountItems,
-  dashboardItems,
-  managementItems,
-  hasSubmenu,
-} from "./menu";
+export { DEFAULT_AVATAR_PATH } from "./common";
+export { hasSubmenu, managementItems } from "./menu";
 export type {
   DashboardItem,
   DashboardItemBase,
