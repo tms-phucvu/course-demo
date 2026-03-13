@@ -34,6 +34,7 @@ import {
 } from "@/features/course-management/utils/course-management.utils";
 import { MOCK_COURSES } from "@/features/course/mock/course-data";
 import { formatDuration } from "@/features/course/utils/course.utils";
+import { Link } from "@/i18n";
 import { Pencil, Plus, Trash2 } from "lucide-react";
 import { useLocale } from "next-intl";
 import Image from "next/image";
@@ -79,7 +80,7 @@ export function CourseManagement() {
     });
 
   return (
-    <div className='CourseList mt-6 flex w-full flex-col gap-6'>
+    <div className='CourseList flex w-full flex-col gap-6'>
       {/* Header Section */}
       <header className='flex flex-wrap items-center justify-between gap-4'>
         <div className='flex items-center gap-2'>
@@ -110,10 +111,13 @@ export function CourseManagement() {
         </div>
 
         <div className='flex items-center gap-2'>
-          <Button variant='default' size='sm' onClick={() => {}}>
-            <Plus className='mr-2 size-4' aria-hidden />
-            Add course
-          </Button>
+          <Link href={"./courses/create"}>
+            <Button variant='default' size='sm' onClick={() => {}}>
+              <Plus className='mr-2 size-4' aria-hidden />
+              Add course
+            </Button>
+          </Link>
+
           <Button
             variant='destructive'
             size='sm'
@@ -219,14 +223,16 @@ export function CourseManagement() {
                     </TableCell>
                     <TableCell className='text-right'>
                       <div className='flex items-center justify-end gap-1'>
-                        <Button
-                          variant='ghost'
-                          size='icon'
-                          onClick={() => {}}
-                          aria-label={`Edit ${course.title}`}
-                        >
-                          <Pencil className='size-4' aria-hidden />
-                        </Button>
+                        <Link href={`./courses/edit/${course.id}`}>
+                          <Button
+                            variant='ghost'
+                            size='icon'
+                            onClick={() => {}}
+                            aria-label={`Edit ${course.title}`}
+                          >
+                            <Pencil className='size-4' aria-hidden />
+                          </Button>
+                        </Link>
                         <Button
                           variant='ghost'
                           size='icon'
