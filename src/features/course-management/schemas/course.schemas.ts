@@ -16,6 +16,20 @@ export const courseSchema = z.object({
       value: z.string().min(1),
     })
   ),
+  sections: z
+    .array(
+      z.object({
+        title: z.string().min(1, "Section title is required"),
+        lessons: z
+          .array(
+            z.object({
+              title: z.string().min(1, "Lesson title is required"),
+            })
+          )
+          .min(1, "Each section must have at least one lesson"),
+      })
+    )
+    .min(1, "Please add at least one section"),
 });
 
 export type CourseFormValues = z.infer<typeof courseSchema>;

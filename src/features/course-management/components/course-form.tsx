@@ -17,7 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { useYoutubeVideoInfo } from "@/features/course-management/hooks/use-youtube-video-info";
+import { LessonFields } from "@/features/course-management/components/lesson-fields";
 import {
   CourseFormValues,
   courseSchema,
@@ -25,11 +25,9 @@ import {
 import { Link } from "@/i18n";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Info, List, Trash2, UploadCloud } from "lucide-react";
-import { useEffect } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 
 function CourseForm() {
-  const { fetchInfo, info } = useYoutubeVideoInfo();
   const form = useForm<CourseFormValues>({
     resolver: zodResolver(courseSchema),
     defaultValues: {
@@ -40,28 +38,18 @@ function CourseForm() {
       tags: "",
       requirements: [{ value: "" }],
       learningOutcomes: [{ value: "" }],
+      sections: [
+        {
+          title: "Introduction",
+          lessons: [{ title: "Welcome to the course" }],
+        },
+      ],
     },
   });
 
   function onSubmit(data: CourseFormValues) {
     console.log("data", data);
-
-    const url = data.title?.trim();
-    if (!url) {
-      console.log("Không có URL");
-      return;
-    }
-
-    fetchInfo(url);
   }
-
-  useEffect(() => {
-    if (info) {
-      console.log("Tiêu đề:", info.title);
-      console.log("Thời lượng (giây):", info.durationSeconds);
-      console.log("Video ID:", info.videoId);
-    }
-  }, [info]);
 
   const {
     register,
@@ -84,6 +72,15 @@ function CourseForm() {
   } = useFieldArray<CourseFormValues>({
     control,
     name: "learningOutcomes",
+  });
+
+  const {
+    fields: sectionFields,
+    append: appendSection,
+    remove: removeSection,
+  } = useFieldArray({
+    control,
+    name: "sections",
   });
 
   return (
@@ -275,9 +272,57 @@ function CourseForm() {
         </div>
         {/* Curriculum Structure of Course */}
         <div className='flex flex-col gap-4'>
-          <div className='flex items-center gap-2 font-bold'>
-            <List className='h-5 w-5' />
-            <div>Curriculum structure</div>
+          <div className='flex items-center justify-between font-bold'>
+            <div className='flex items-center gap-2'>
+              <List className='h-5 w-5' />
+              <div>Curriculum structure</div>
+            </div>
+            <Button
+              type='button'
+              variant='outline'
+              size='sm'
+              onClick={() =>
+                appendSection({ title: "", lessons: [{ title: "" }] })
+              }
+            >
+              + Add Section
+            </Button>
+          </div>
+
+          <div className='space-y-4'>
+            {sectionFields.map((section, sIndex) => (
+              <Card key={section.id} className='border shadow-none'>
+                <div className='bg-border/30 flex items-center gap-3 border-b p-4'>
+                  <div className='flex flex-1 flex-col gap-1'>
+                    <span className='text-primary text-[10px] font-semibold uppercase'>
+                      Section {sIndex + 1}
+                    </span>
+                    <Input
+                      {...register(`sections.${sIndex}.title`)}
+                      placeholder='Enter section title...'
+                      className={
+                        "h-auto rounded-none border-x-0 border-t-0 border-b-2 px-1 py-0 text-xl! font-semibold shadow-none focus-visible:ring-0"
+                      }
+                    />
+                  </div>
+                  <Button
+                    variant='ghost'
+                    size='icon'
+                    onClick={() => removeSection(sIndex)}
+                  >
+                    <Trash2 className='text-destructive h-4 w-4' />
+                  </Button>
+                </div>
+
+                <CardContent className='p-4'>
+                  <LessonFields
+                    sectionIndex={sIndex}
+                    control={control}
+                    register={register}
+                  />
+                </CardContent>
+              </Card>
+            ))}
           </div>
         </div>
         {/* Action for Course Form */}
