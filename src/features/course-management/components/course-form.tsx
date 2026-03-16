@@ -24,11 +24,16 @@ import {
 } from "@/features/course-management/schemas/course.schemas";
 import { Link } from "@/i18n";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Info, List, Trash2, UploadCloud } from "lucide-react";
+import { GripVertical, Info, List, Trash2, UploadCloud } from "lucide-react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 
 function CourseForm() {
-  const form = useForm<CourseFormValues>({
+  const {
+    register,
+    control,
+    formState: { errors, isSubmitting },
+    handleSubmit,
+  } = useForm<CourseFormValues>({
     resolver: zodResolver(courseSchema),
     defaultValues: {
       title: "",
@@ -40,8 +45,8 @@ function CourseForm() {
       learningOutcomes: [{ value: "" }],
       sections: [
         {
-          title: "Introduction",
-          lessons: [{ title: "Welcome to the course" }],
+          title: "",
+          lessons: [],
         },
       ],
     },
@@ -50,12 +55,6 @@ function CourseForm() {
   function onSubmit(data: CourseFormValues) {
     console.log("data", data);
   }
-
-  const {
-    register,
-    control,
-    formState: { errors },
-  } = form;
 
   const {
     fields: requirementFields,
@@ -86,10 +85,7 @@ function CourseForm() {
   return (
     <div className='flex flex-col gap-6 sm:px-16'>
       <h1 className='text-4xl font-bold'>Create course</h1>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className='flex flex-col gap-4'
-      >
+      <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-10'>
         {/* Basic Information of Course */}
         <div className='flex flex-col gap-4'>
           <div className='flex items-center gap-2 font-bold'>
@@ -209,7 +205,7 @@ function CourseForm() {
                       <div key={field.id} className='flex gap-1'>
                         <Input
                           {...register(`requirements.${index}.value`)}
-                          placeholder='Enter requirement'
+                          placeholder='Enter requirements...'
                         />
                         <Button
                           variant={"ghost"}
@@ -242,7 +238,7 @@ function CourseForm() {
                       <div key={field.id} className='flex gap-1'>
                         <Input
                           {...register(`learningOutcomes.${index}.value`)}
-                          placeholder='Enter learning outcome'
+                          placeholder='Enter learning outcomes...'
                         />
                         <Button
                           variant={"ghost"}
@@ -281,9 +277,7 @@ function CourseForm() {
               type='button'
               variant='outline'
               size='sm'
-              onClick={() =>
-                appendSection({ title: "", lessons: [{ title: "" }] })
-              }
+              onClick={() => appendSection({ title: "", lessons: [] })}
             >
               + Add Section
             </Button>
@@ -293,6 +287,7 @@ function CourseForm() {
             {sectionFields.map((section, sIndex) => (
               <Card key={section.id} className='border shadow-none'>
                 <div className='bg-border/30 flex items-center gap-3 border-b p-4'>
+                  <GripVertical className='text-foreground/80 h-6 w-6 cursor-grab' />
                   <div className='flex flex-1 flex-col gap-1'>
                     <span className='text-primary text-[10px] font-semibold uppercase'>
                       Section {sIndex + 1}
@@ -301,7 +296,7 @@ function CourseForm() {
                       {...register(`sections.${sIndex}.title`)}
                       placeholder='Enter section title...'
                       className={
-                        "h-auto rounded-none border-x-0 border-t-0 border-b-2 px-1 py-0 text-xl! font-semibold shadow-none focus-visible:ring-0"
+                        "h-auto rounded-none border-x-0 border-t-0 border-b-2 px-0 py-0 text-xl! font-semibold shadow-none focus-visible:ring-0"
                       }
                     />
                   </div>
@@ -315,11 +310,7 @@ function CourseForm() {
                 </div>
 
                 <CardContent className='p-4'>
-                  <LessonFields
-                    sectionIndex={sIndex}
-                    control={control}
-                    register={register}
-                  />
+                  <LessonFields sectionIndex={sIndex} control={control} />
                 </CardContent>
               </Card>
             ))}
@@ -330,7 +321,7 @@ function CourseForm() {
           <Link href={"./"}>
             <Button variant={"outline"}>Cancel</Button>
           </Link>
-          <Button type='submit' disabled={form.formState.isSubmitting}>
+          <Button type='submit' disabled={isSubmitting}>
             Publish Course
           </Button>
         </div>
