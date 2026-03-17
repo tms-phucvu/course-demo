@@ -19,7 +19,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { cn } from "@/core/lib/utils";
-import { CourseDeleteConfirmDialog } from "@/features/course-management/components/course-delete-confirm-dialog";
+import { CourseDeleteConfirmDialog } from "@/features/course-management/components/dialog/course-delete-confirm-dialog";
 import {
   Level,
   LEVELS,

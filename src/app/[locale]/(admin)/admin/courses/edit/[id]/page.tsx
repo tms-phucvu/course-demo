@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 
-import CourseEdit from "@/features/course-management/components/course-edit";
+import CourseEdit from "@/features/course-management/components/course-actions/course-edit";
 import { getCourseById } from "@/features/course/mock/course-data";
 
 interface PageProps {

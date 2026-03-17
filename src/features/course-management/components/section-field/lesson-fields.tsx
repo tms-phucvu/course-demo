@@ -3,20 +3,24 @@
 import { Button } from "@/components/ui/button";
 import { CourseFormValues } from "@/features/course-management/schemas/course.schemas";
 import {
-  Equal,
-  Eye,
-  Pencil,
-  PlayCircle,
-  PlusCircle,
-  Trash2,
-} from "lucide-react";
+  DndContext,
+  DragEndEvent,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { PlusCircle } from "lucide-react";
 import { useState } from "react";
 import { Control, useFieldArray } from "react-hook-form";
 
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { LessonDialogContent } from "@/features/course-management/components/lesson-dialog-content";
+import { LessonDialogContent } from "@/features/course-management/components/section-field/lesson-dialog-content";
+import { SortableLessonItem } from "@/features/course-management/components/section-field/sortable-lesson-item";
 import { LessonFormValues } from "@/features/course-management/schemas/lesson.schemas";
-import { formatVideoDuration } from "@/features/course/utils/course.utils";
 
 interface LessonFieldsProps {
   sectionIndex: number;
@@ -24,7 +28,7 @@ interface LessonFieldsProps {
 }
 
 export function LessonFields({ sectionIndex, control }: LessonFieldsProps) {
-  const { fields, append, remove, update } = useFieldArray({
+  const { fields, append, remove, update, move } = useFieldArray({
     control,
     name: `sections.${sectionIndex}.lessons`,
   });
@@ -56,55 +60,41 @@ export function LessonFields({ sectionIndex, control }: LessonFieldsProps) {
     setOpenEdit(true);
   };
 
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
+  );
+
+  const onDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+
+    const oldIndex = fields.findIndex((item) => item.id === active.id);
+    const newIndex = fields.findIndex((item) => item.id === over.id);
+
+    if (oldIndex === -1 || newIndex === -1 || oldIndex === newIndex) return;
+
+    move(oldIndex, newIndex);
+  };
+
   return (
     <div className='flex flex-col gap-3'>
-      {fields.map((lesson, lIndex) => (
-        <div
-          key={lesson.id}
-          className='group hover:border-primary/50 flex items-center gap-3 rounded-lg border p-3 transition-colors'
+      <DndContext sensors={sensors} onDragEnd={onDragEnd}>
+        <SortableContext
+          items={fields.map((lesson) => lesson.id)}
+          strategy={verticalListSortingStrategy}
         >
-          <Equal className='text-muted-foreground h-4 w-4 cursor-grab' />
-
-          <div className='bg-primary/10 flex h-8 w-8 items-center justify-center rounded-lg'>
-            <PlayCircle className='text-primary h-5 w-5' />
-          </div>
-
-          <div className='flex flex-1 flex-col'>
-            <span className='text-sm font-semibold'>{lesson.title}</span>
-            <span className='text-muted-foreground text-xs'>
-              {`${formatVideoDuration(lesson.duration)} • ${lesson.videoId}`}
-            </span>
-          </div>
-
-          <div className='flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100'>
-            <a
-              href={`https://www.youtube.com/watch?v=${lesson.videoId}`}
-              target='_blank'
-              rel='noopener noreferrer'
-            >
-              <Button type='button' variant='ghost' size='icon'>
-                <Eye className='h-4 w-4' />
-              </Button>
-            </a>
-            <Button
-              type='button'
-              variant='ghost'
-              size='icon'
-              onClick={() => openEditDialog(lIndex, lesson.videoId)}
-            >
-              <Pencil className='h-4 w-4' />
-            </Button>
-            <Button
-              type='button'
-              variant='ghost'
-              size='icon'
-              onClick={() => remove(lIndex)}
-            >
-              <Trash2 className='text-destructive h-4 w-4' />
-            </Button>
-          </div>
-        </div>
-      ))}
+          {fields.map((lesson, lIndex) => (
+            <SortableLessonItem
+              key={lesson.id}
+              id={lesson.id}
+              lesson={lesson}
+              index={lIndex}
+              openEditDialog={openEditDialog}
+              remove={remove}
+            />
+          ))}
+        </SortableContext>
+      </DndContext>
 
       {/* ADD LESSON DIALOG */}
       <Dialog open={openAdd} onOpenChange={setOpenAdd}>

@@ -17,14 +17,25 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { LessonFields } from "@/features/course-management/components/lesson-fields";
+import { SortableSectionCard } from "@/features/course-management/components/section-field/sortable-section-card";
 import {
   CourseFormValues,
   courseSchema,
 } from "@/features/course-management/schemas/course.schemas";
 import { Link } from "@/i18n";
+import {
+  DndContext,
+  DragEndEvent,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { GripVertical, Info, List, Trash2, UploadCloud } from "lucide-react";
+import { Info, List, Trash2, UploadCloud } from "lucide-react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 
 function CourseForm() {
@@ -53,7 +64,19 @@ function CourseForm() {
   });
 
   function onSubmit(data: CourseFormValues) {
-    console.log("data", data);
+    const dataWithOrder = {
+      ...data,
+      sections: data.sections.map((section, sectionIndex) => ({
+        ...section,
+        order: sectionIndex,
+        lessons: section.lessons.map((lesson, lessonIndex) => ({
+          ...lesson,
+          order: lessonIndex,
+        })),
+      })),
+    };
+
+    console.log("data", dataWithOrder);
   }
 
   const {
@@ -77,10 +100,31 @@ function CourseForm() {
     fields: sectionFields,
     append: appendSection,
     remove: removeSection,
+    move: moveSection,
   } = useFieldArray({
     control,
     name: "sections",
   });
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
+  );
+
+  const onSectionDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+
+    const oldIndex = sectionFields.findIndex(
+      (section) => section.id === active.id
+    );
+    const newIndex = sectionFields.findIndex(
+      (section) => section.id === over.id
+    );
+
+    if (oldIndex === -1 || newIndex === -1 || oldIndex === newIndex) return;
+
+    moveSection(oldIndex, newIndex);
+  };
 
   return (
     <div className='flex flex-col gap-6 sm:px-16'>
@@ -284,36 +328,23 @@ function CourseForm() {
           </div>
 
           <div className='space-y-4'>
-            {sectionFields.map((section, sIndex) => (
-              <Card key={section.id} className='border shadow-none'>
-                <div className='bg-border/30 flex items-center gap-3 border-b p-4'>
-                  <GripVertical className='text-foreground/80 h-6 w-6 cursor-grab' />
-                  <div className='flex flex-1 flex-col gap-1'>
-                    <span className='text-primary text-[10px] font-semibold uppercase'>
-                      Section {sIndex + 1}
-                    </span>
-                    <Input
-                      {...register(`sections.${sIndex}.title`)}
-                      placeholder='Enter section title...'
-                      className={
-                        "h-auto rounded-none border-x-0 border-t-0 border-b-2 px-0 py-0 text-xl! font-semibold shadow-none focus-visible:ring-0"
-                      }
-                    />
-                  </div>
-                  <Button
-                    variant='ghost'
-                    size='icon'
-                    onClick={() => removeSection(sIndex)}
-                  >
-                    <Trash2 className='text-destructive h-4 w-4' />
-                  </Button>
-                </div>
-
-                <CardContent className='p-4'>
-                  <LessonFields sectionIndex={sIndex} control={control} />
-                </CardContent>
-              </Card>
-            ))}
+            <DndContext sensors={sensors} onDragEnd={onSectionDragEnd}>
+              <SortableContext
+                items={sectionFields.map((section) => section.id)}
+                strategy={verticalListSortingStrategy}
+              >
+                {sectionFields.map((section, sIndex) => (
+                  <SortableSectionCard
+                    key={section.id}
+                    section={section}
+                    index={sIndex}
+                    register={register}
+                    removeSection={removeSection}
+                    control={control}
+                  />
+                ))}
+              </SortableContext>
+            </DndContext>
           </div>
         </div>
         {/* Action for Course Form */}
