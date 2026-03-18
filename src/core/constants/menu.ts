@@ -53,20 +53,12 @@ export const managementItems: DashboardItem[] = [
     name: "userManagement",
     title: "userManagement",
     icon: Users,
-    disabled: true,
-    children: [
-      {
-        name: "userManagerDashboard",
-        title: "dashboard",
-        url: "/users/dashboard",
-      },
-      { name: "userManagerList", title: "list", url: "/users" },
-    ],
+    url: "/admin/users",
   },
   {
     name: "courseManagement",
     title: "courseManagement",
     icon: Package,
-    url: "/admin",
+    url: "/admin/courses",
   },
 ];
