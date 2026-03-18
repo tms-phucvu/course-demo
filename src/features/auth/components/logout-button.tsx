@@ -18,6 +18,7 @@ interface LogoutButtonProps {
   size?: "default" | "sm" | "lg" | "icon";
   showIcon?: boolean;
   iconOnly?: boolean;
+  backUrl?: string;
   className?: string;
 }
 
@@ -26,6 +27,7 @@ export function LogoutButton({
   size = "default",
   showIcon = true,
   iconOnly = false,
+  backUrl = "/login",
   className,
 }: LogoutButtonProps) {
   const t = useTranslations("auth");
@@ -34,7 +36,7 @@ export function LogoutButton({
   const handleLogout = async () => {
     setIsLoading(true);
     try {
-      await signOut({ callbackUrl: "/login" });
+      await signOut({ callbackUrl: backUrl });
     } catch {
       setIsLoading(false);
     }

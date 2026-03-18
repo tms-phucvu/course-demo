@@ -1,12 +1,7 @@
 "use client";
 
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useTranslations } from "next-intl";
-import { z } from "zod";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { PasswordInput } from "@/components/ui/password-input";
 import {
   Form,
   FormControl,
@@ -15,13 +10,18 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertCircle, CheckCircle } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Link, useRouter } from "@/i18n/routing";
-import { authService } from "../services";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { AlertCircle, CheckCircle } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 import { useFormState } from "../hooks";
-import { GoogleLoginButton } from "./google-login-button";
+import { authService } from "../services";
 import { FacebookLoginButton } from "./facebook-login-button";
+import { GoogleLoginButton } from "./google-login-button";
 import { InstagramLoginButton } from "./instagram-login-button";
 import { LineLoginButton } from "./line-login-button";
 import { SocialLoginDivider } from "./social-login-divider";
@@ -87,31 +87,31 @@ export function RegisterForm() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
-        <div className="grid gap-4">
+        <div className='grid gap-4'>
           {formState.error && (
-            <Alert variant="destructive">
-              <AlertCircle className="h-4 w-4" />
+            <Alert variant='destructive'>
+              <AlertCircle className='h-4 w-4' />
               <AlertDescription>{formState.error}</AlertDescription>
             </Alert>
           )}
 
           {formState.success && (
             <Alert>
-              <CheckCircle className="h-4 w-4" />
+              <CheckCircle className='h-4 w-4' />
               <AlertDescription>{formState.success}</AlertDescription>
             </Alert>
           )}
 
           <FormField
             control={form.control}
-            name="name"
+            name='name'
             render={({ field }) => (
-              <FormItem className="grid gap-2">
+              <FormItem className='grid gap-2'>
                 <FormLabel>{t("name")}</FormLabel>
                 <FormControl>
                   <Input
                     placeholder={t("namePlaceholder")}
-                    autoComplete="name"
+                    autoComplete='name'
                     {...field}
                   />
                 </FormControl>
@@ -122,15 +122,15 @@ export function RegisterForm() {
 
           <FormField
             control={form.control}
-            name="email"
+            name='email'
             render={({ field }) => (
-              <FormItem className="grid gap-2">
+              <FormItem className='grid gap-2'>
                 <FormLabel>{t("email")}</FormLabel>
                 <FormControl>
                   <Input
-                    type="email"
+                    type='email'
                     placeholder={t("emailPlaceholder")}
-                    autoComplete="email"
+                    autoComplete='email'
                     {...field}
                   />
                 </FormControl>
@@ -141,14 +141,14 @@ export function RegisterForm() {
 
           <FormField
             control={form.control}
-            name="password"
+            name='password'
             render={({ field }) => (
-              <FormItem className="grid gap-2">
+              <FormItem className='grid gap-2'>
                 <FormLabel>{t("password")}</FormLabel>
                 <FormControl>
                   <PasswordInput
                     placeholder={t("passwordPlaceholder")}
-                    autoComplete="new-password"
+                    autoComplete='new-password'
                     {...field}
                   />
                 </FormControl>
@@ -159,14 +159,14 @@ export function RegisterForm() {
 
           <FormField
             control={form.control}
-            name="confirmPassword"
+            name='confirmPassword'
             render={({ field }) => (
-              <FormItem className="grid gap-2">
+              <FormItem className='grid gap-2'>
                 <FormLabel>{t("confirmPassword")}</FormLabel>
                 <FormControl>
                   <PasswordInput
                     placeholder={t("confirmPasswordPlaceholder")}
-                    autoComplete="new-password"
+                    autoComplete='new-password'
                     {...field}
                   />
                 </FormControl>
@@ -176,8 +176,8 @@ export function RegisterForm() {
           />
 
           <Button
-            type="submit"
-            className="w-full"
+            type='submit'
+            className='w-full'
             disabled={formState.isLoading || !!formState.success}
           >
             {formState.isLoading ? t("submitting") : t("submit")}
@@ -185,17 +185,17 @@ export function RegisterForm() {
 
           <SocialLoginDivider />
 
-          <div className="flex justify-center gap-4">
-            <GoogleLoginButton mode="register" disabled={formState.isLoading} />
-            <FacebookLoginButton mode="register" disabled={formState.isLoading} />
-            <InstagramLoginButton mode="register" disabled={formState.isLoading} />
-            <LineLoginButton mode="register" disabled={formState.isLoading} />
+          <div className='flex justify-center gap-4'>
+            <GoogleLoginButton mode='register' disabled={true} />
+            <FacebookLoginButton mode='register' disabled={true} />
+            <InstagramLoginButton mode='register' disabled={true} />
+            <LineLoginButton mode='register' disabled={true} />
           </div>
         </div>
 
-        <div className="mt-4 text-center text-sm">
+        <div className='mt-4 text-center text-sm'>
           {t("hasAccount")}{" "}
-          <Link href="/login" className="underline">
+          <Link href='/login' className='underline'>
             {t("login")}
           </Link>
         </div>

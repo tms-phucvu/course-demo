@@ -6,6 +6,11 @@ export type ActionState = {
   data?: Record<string, unknown>;
 };
 
+export enum Role {
+  ADMIN = "ADMIN",
+  STUDENT = "STUDENT",
+}
+
 export type User = {
   id: string;
   name: string | null;

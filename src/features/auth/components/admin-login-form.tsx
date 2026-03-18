@@ -12,21 +12,17 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
+import { Role } from "@/features/auth/types";
 import { Link, useRouter } from "@/i18n/routing";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertCircle } from "lucide-react";
-import { signIn } from "next-auth/react";
+import { getSession, signIn } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useFormState } from "../hooks";
-import { FacebookLoginButton } from "./facebook-login-button";
-import { GoogleLoginButton } from "./google-login-button";
-import { InstagramLoginButton } from "./instagram-login-button";
-import { LineLoginButton } from "./line-login-button";
-import { SocialLoginDivider } from "./social-login-divider";
 
-export function LoginForm() {
+export function AdminLoginForm() {
   const t = useTranslations("auth.login");
   const tErrors = useTranslations("auth.errors");
   const tValidation = useTranslations("validation");
@@ -54,7 +50,7 @@ export function LoginForm() {
     formState.startSubmit();
 
     try {
-      const result = await signIn("user-credentials", {
+      const result = await signIn("admin-credentials", {
         email: data.email,
         password: data.password,
         redirect: false,
@@ -62,10 +58,15 @@ export function LoginForm() {
 
       if (result?.error) {
         formState.setError(tErrors("invalidCredentials"));
-      } else {
-        router.push("/");
-        router.refresh();
+        return;
       }
+      const session = await getSession();
+      if (session?.user.role !== Role.ADMIN) {
+        formState.setError("You don't have admin access");
+        return;
+      }
+      router.push("/admin");
+      router.refresh();
     } catch {
       formState.setError(tErrors("unknownError"));
     } finally {
@@ -140,27 +141,10 @@ export function LoginForm() {
           <p className='text-muted-foreground text-xs'>{t("demoHint")}</p>
           <div className='bg-muted/50 text-muted-foreground rounded-md border px-3 py-2 font-mono text-xs'>
             <span className='font-medium'>{t("demoEmail")}:</span>{" "}
-            user@example.com
+            admin@elearning.com
             <br />
-            <span className='font-medium'>{t("demoPassword")}:</span>{" "}
-            StrongPassword123
+            <span className='font-medium'>{t("demoPassword")}:</span> admin123
           </div>
-
-          <SocialLoginDivider />
-
-          <div className='flex justify-center gap-4'>
-            <GoogleLoginButton mode='login' disabled={true} />
-            <FacebookLoginButton mode='login' disabled={true} />
-            <InstagramLoginButton mode='login' disabled={true} />
-            <LineLoginButton mode='login' disabled={true} />
-          </div>
-        </div>
-
-        <div className='mt-4 text-center text-sm'>
-          {t("noAccount")}{" "}
-          <Link href='/register' className='underline'>
-            {t("register")}
-          </Link>
         </div>
       </form>
     </Form>

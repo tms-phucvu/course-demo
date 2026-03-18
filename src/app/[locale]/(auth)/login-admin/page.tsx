@@ -5,15 +5,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { LoginForm } from "@/features/auth";
+import { AdminLoginForm } from "@/features/auth/components/admin-login-form";
 import { useTranslations } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
 
-interface LoginPageProps {
+interface AdminLoginPageProps {
   params: Promise<{ locale: string }>;
 }
 
-export default async function LoginPage({ params }: LoginPageProps) {
+export default async function AdminLoginPage({ params }: AdminLoginPageProps) {
   const { locale } = await params;
   setRequestLocale(locale);
 
@@ -30,7 +30,7 @@ function LoginPageContent() {
         <CardDescription>{t("description")}</CardDescription>
       </CardHeader>
       <CardContent>
-        <LoginForm />
+        <AdminLoginForm />
       </CardContent>
     </Card>
   );

@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { DEFAULT_AVATAR_PATH } from "@/core/constants";
+import { Role } from "@/features/auth/types";
 import { Link } from "@/i18n/routing";
 import { CreditCard, LogOut, Settings, Sparkles } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
@@ -20,14 +21,14 @@ export function UserButton() {
   const { data: session, status } = useSession();
   const t = useTranslations("navigation");
 
-  // Mock data
-  const mockUser = {
-    name: session?.user?.name || "Admin",
-    email: session?.user?.email || "admin@tomosia.com",
+  const User = {
+    name: session?.user?.name || "Unknown",
+    email: session?.user?.email || "unknown@tomosia.com",
     image: session?.user?.image ?? undefined,
+    role: session?.user?.role,
   };
 
-  const initials = mockUser.name
+  const initials = User.name
     .split(" ")
     .map((n) => n[0])
     .join("")
@@ -47,7 +48,11 @@ export function UserButton() {
   }
 
   async function handleSignOut() {
-    await signOut({ callbackUrl: "/login" });
+    if (User.role === Role.ADMIN) {
+      await signOut({ callbackUrl: "/admin/login" });
+    } else {
+      await signOut({ callbackUrl: "/login" });
+    }
   }
 
   return (
@@ -87,9 +92,9 @@ export function UserButton() {
             </AvatarFallback>
           </Avatar>
           <div className='min-w-0 flex-1'>
-            <p className='truncate text-sm font-semibold'>{mockUser.name}</p>
+            <p className='truncate text-sm font-semibold'>{User.name}</p>
             <p className='text-muted-foreground truncate text-xs'>
-              {mockUser.email}
+              {User.email}
             </p>
           </div>
         </div>

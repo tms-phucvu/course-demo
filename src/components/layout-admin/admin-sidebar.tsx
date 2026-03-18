@@ -277,6 +277,7 @@ export function AdminSidebar() {
               size='sm'
               className='w-full justify-start'
               iconOnly={sidebarState === "collapsed"}
+              backUrl='/login-admin'
             />
           </SidebarMenuItem>
         </SidebarMenu>
