@@ -1,11 +1,14 @@
 import {
-  signInWithEmail,
-  signUpWithEmail,
-  signOutUser,
-  resetPassword,
+  api,
+  ApiError,
   confirmReset,
+  resetPassword,
+  signInWithEmail,
+  signOutUser,
   type FirebaseUser,
 } from "@/core/lib";
+import { Role } from "@/features/auth/types";
+import { ApiAuthResponse } from "@/features/auth/types/api.types";
 
 // ============================================
 // INPUT TYPES
@@ -39,7 +42,9 @@ export interface AuthUser {
   id: string;
   email: string | null;
   name: string | null;
-  avatar: string | null;
+  avatar?: string | null;
+  role?: Role;
+  accessToken?: string;
 }
 
 export interface LoginOutput {
@@ -119,22 +124,30 @@ export const authService = {
    */
   async register(input: RegisterInput): Promise<RegisterOutput> {
     try {
-      const firebaseUser = await signUpWithEmail(
-        input.email,
-        input.password,
-        input.name
-      );
+      const response = await api.post<ApiAuthResponse>("auth/register", {
+        name: input.name,
+        email: input.email,
+        password: input.password,
+      });
 
       return {
         success: true,
-        user: toAuthUser(firebaseUser),
+        user: {
+          id: response.user.id,
+          name: response.user.name,
+          email: response.user.email,
+          role: response.user.role,
+          accessToken: response.accessToken,
+        },
         error: null,
       };
     } catch (error) {
+      const err = error as ApiError;
+
       return {
         success: false,
         user: null,
-        error: error instanceof Error ? error.message : "Registration failed",
+        error: err.message || "Registration failed",
       };
     }
   },
@@ -144,7 +157,9 @@ export const authService = {
    * @param input - { email }
    * @returns { success, message, error }
    */
-  async forgotPassword(input: ForgotPasswordInput): Promise<ForgotPasswordOutput> {
+  async forgotPassword(
+    input: ForgotPasswordInput
+  ): Promise<ForgotPasswordOutput> {
     try {
       await resetPassword(input.email);
 
@@ -157,7 +172,8 @@ export const authService = {
       return {
         success: false,
         message: null,
-        error: error instanceof Error ? error.message : "Failed to send reset email",
+        error:
+          error instanceof Error ? error.message : "Failed to send reset email",
       };
     }
   },
@@ -180,7 +196,8 @@ export const authService = {
       return {
         success: false,
         message: null,
-        error: error instanceof Error ? error.message : "Failed to reset password",
+        error:
+          error instanceof Error ? error.message : "Failed to reset password",
       };
     }
   },

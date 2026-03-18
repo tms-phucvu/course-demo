@@ -1,4 +1,5 @@
 import { Role } from "@/features/auth/types";
+import { ApiAuthResponse } from "@/features/auth/types/api.types";
 import { loginSchema } from "@/features/auth/validations";
 import type { NextAuthOptions, User } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
@@ -7,19 +8,6 @@ import GoogleProvider from "next-auth/providers/google";
 import InstagramProvider from "next-auth/providers/instagram";
 import LineProvider from "next-auth/providers/line";
 import { api } from "./api-client";
-
-type ApiLoginResponse = {
-  accessToken: string;
-  user: {
-    id: string;
-    name: string;
-    email: string;
-    role: Role;
-    createdAt: string;
-    updatedAt: string;
-    [key: string]: unknown;
-  };
-};
 
 export const authOptions: NextAuthOptions = {
   pages: {
@@ -60,7 +48,7 @@ export const authOptions: NextAuthOptions = {
         const { email, password } = validated.data;
 
         try {
-          const response = await api.post<ApiLoginResponse>("auth/login", {
+          const response = await api.post<ApiAuthResponse>("auth/login", {
             email,
             password,
           });
@@ -98,13 +86,10 @@ export const authOptions: NextAuthOptions = {
         const { email, password } = validated.data;
 
         try {
-          const response = await api.post<ApiLoginResponse>(
-            "admin/auth/login",
-            {
-              email,
-              password,
-            }
-          );
+          const response = await api.post<ApiAuthResponse>("admin/auth/login", {
+            email,
+            password,
+          });
 
           if (!response?.user || !response?.accessToken) return null;
 
