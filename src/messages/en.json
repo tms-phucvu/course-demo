@@ -158,5 +158,65 @@
   "metadata": {
     "title": "Next Auth Template",
     "description": "A Next.js template with authentication"
+  },
+  "userManagement": {
+    "searchPlaceholder": "Search by name, address, plan, status…",
+    "filterAll": "All",
+    "filterRoleLabel": "Filter by role",
+    "filterStatusLabel": "Filter by status",
+    "deleteSelected": "Delete selected",
+    "deleteSuccess": "Selected user(s) deleted.",
+    "selectAll": "Select all on page",
+    "selectUser": "Select {name}",
+    "name": "Name",
+    "email": "Email",
+    "role": "Role",
+    "status": "Status",
+    "createdAt": "Created at",
+    "actions": "Actions",
+    "editUser": "Edit {name}",
+    "deleteUser": "Delete {name}",
+    "editHint": "Edit form coming soon.",
+    "empty": "No users found.",
+    "paginationLabel": "Showing {start} to {end} of {total}",
+    "pageNumber": "Page {page}",
+    "previous": "Previous",
+    "next": "Next",
+    "role_admin": "Admin",
+    "role_student": "Student",
+    "status_active": "Active",
+    "status_requestPlan": "Request Plan",
+    "status_inactive": "Inactive",
+    "addUser": {
+      "addUser": "Add User",
+      "title": "Add User",
+      "avatar": "Avatar",
+      "chooseImage": "Choose image",
+      "removeAvatar": "Remove avatar",
+      "invalidImageType": "Invalid file type. Allowed: JPG, PNG, WebP.",
+      "fileTooBig": "File is too large (max 2 MB).",
+      "namePlaceholder": "Full name",
+      "emailPlaceholder": "e.g. example@gmail.com",
+      "cancel": "Cancel",
+      "create": "Create User",
+      "creating": "Creating…",
+      "created": "User created.",
+      "cropTitle": "Crop image",
+      "cropApply": "Apply"
+    },
+    "deleteConfirm": {
+      "titleOne": "Delete user",
+      "titleSelected": "Delete selected users",
+      "descriptionOne": "Are you sure you want to delete {name}? This action cannot be undone.",
+      "descriptionSelected": "Are you sure you want to delete {count} selected user(s)? This action cannot be undone.",
+      "cancel": "Cancel",
+      "confirm": "Delete"
+    },
+    "editUserModal": {
+      "title": "Edit User",
+      "save": "Save",
+      "saving": "Saving…",
+      "saved": "User updated."
+    }
   }
 }

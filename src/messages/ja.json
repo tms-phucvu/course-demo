@@ -158,5 +158,65 @@
   "metadata": {
     "title": "Next Auth Template",
     "description": "認証機能付きNext.jsテンプレート"
+  },
+  "userManagement": {
+    "searchPlaceholder": "名前・住所・プラン・ステータスで検索…",
+    "filterAll": "すべて",
+    "filterRoleLabel": "役割で絞り込む",
+    "filterStatusLabel": "ステータスで絞り込み",
+    "deleteSelected": "選択を削除",
+    "deleteSuccess": "選択したユーザーを削除しました。",
+    "selectAll": "このページをすべて選択",
+    "selectUser": "{name} を選択",
+    "name": "名前",
+    "email": "メールアドレス",
+    "role": "役割",
+    "status": "ステータス",
+    "createdAt": "作成日時",
+    "actions": "操作",
+    "editUser": "{name} を編集",
+    "deleteUser": "{name} を削除",
+    "editHint": "編集フォームは準備中です。",
+    "empty": "ユーザーが見つかりません。",
+    "paginationLabel": "{total} 件中 {start} ～ {end} 件を表示",
+    "pageNumber": "{page} ページ",
+    "previous": "前へ",
+    "next": "次へ",
+    "role_admin": "管理者",
+    "role_student": "学生",
+    "status_active": "有効",
+    "status_requestPlan": "プラン申請中",
+    "status_inactive": "無効",
+    "addUser": {
+      "addUser": "ユーザー追加",
+      "title": "ユーザー追加",
+      "avatar": "アバター",
+      "chooseImage": "画像を選択",
+      "removeAvatar": "アバターを削除",
+      "invalidImageType": "対応形式は JPG, PNG, WebP です。",
+      "fileTooBig": "ファイルが大きすぎます（最大 2 MB）。",
+      "namePlaceholder": "氏名",
+      "emailPlaceholder": "例: example@gmail.com",
+      "cancel": "キャンセル",
+      "create": "ユーザーを作成",
+      "creating": "作成中…",
+      "created": "ユーザーを追加しました。",
+      "cropTitle": "画像を切り抜き",
+      "cropApply": "適用"
+    },
+    "deleteConfirm": {
+      "titleOne": "ユーザーを削除",
+      "titleSelected": "選択したユーザーを削除",
+      "descriptionOne": "{name} を削除してもよろしいですか？この操作は元に戻せません。",
+      "descriptionSelected": "選択した {count} 件のユーザーを削除してもよろしいですか？この操作は元に戻せません。",
+      "cancel": "キャンセル",
+      "confirm": "削除"
+    },
+    "editUserModal": {
+      "title": "ユーザーを編集",
+      "save": "保存",
+      "saving": "保存中…",
+      "saved": "ユーザーを更新しました。"
+    }
   }
 }

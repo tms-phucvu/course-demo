@@ -1,7 +1,7 @@
-import UserList from "@/features/user-management/components/user-list";
+import { UserListTable } from "@/features/user-management";
 
 function UsersPage() {
-  return <UserList />;
+  return <UserListTable />;
 }
 
 export default UsersPage;
