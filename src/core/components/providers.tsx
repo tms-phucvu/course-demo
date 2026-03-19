@@ -1,8 +1,11 @@
-'use client';
+"use client";
 
-import { SessionProvider } from 'next-auth/react';
-import { ThemeProvider } from 'next-themes';
-import { Toaster } from '@/components/ui/sonner';
+import { Toaster } from "@/components/ui/sonner";
+import { AuthProvider } from "@/core/components/auth-provider";
+import { queryClient } from "@/core/lib/react-query";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { SessionProvider } from "next-auth/react";
+import { ThemeProvider } from "next-themes";
 
 interface ProvidersProps {
   children: React.ReactNode;
@@ -10,16 +13,18 @@ interface ProvidersProps {
 
 export function Providers({ children }: ProvidersProps) {
   return (
-    <SessionProvider>
-      <ThemeProvider
-        attribute="class"
-        defaultTheme="system"
-        enableSystem
-        disableTransitionOnChange
-      >
-        {children}
-        <Toaster richColors position="top-right" />
-      </ThemeProvider>
-    </SessionProvider>
+    <QueryClientProvider client={queryClient}>
+      <SessionProvider>
+        <ThemeProvider
+          attribute='class'
+          defaultTheme='system'
+          enableSystem
+          disableTransitionOnChange
+        >
+          <AuthProvider>{children}</AuthProvider>
+          <Toaster richColors position='top-right' />
+        </ThemeProvider>
+      </SessionProvider>
+    </QueryClientProvider>
   );
 }

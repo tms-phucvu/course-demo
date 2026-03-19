@@ -1,10 +1,10 @@
-import type { Metadata } from "next";
-import { notFound } from "next/navigation";
-import { NextIntlClientProvider } from "next-intl";
-import { getMessages, setRequestLocale } from "next-intl/server";
 import { Providers } from "@/core/components/providers";
 import { SetLocaleLang } from "@/core/components/set-locale-lang";
 import { routing } from "@/i18n/routing";
+import type { Metadata } from "next";
+import { NextIntlClientProvider } from "next-intl";
+import { getMessages, setRequestLocale } from "next-intl/server";
+import { notFound } from "next/navigation";
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));

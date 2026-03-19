@@ -1,3 +1,4 @@
+"use client";
 import { ThemeModeToggle } from "@/components/theme-mode-toggle";
 import {
   Breadcrumb,
@@ -10,9 +11,24 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { UserButton } from "@/features/auth";
+import { usePathname } from "@/i18n";
 import { LocaleSwitcher } from "@/shared";
 
+const PATH_TITLE_MAP: Record<string, string> = {
+  "/admin/users": "Users",
+  "/admin/courses": "Course",
+};
+
+function getTitleFromPath(path: string): string {
+  const matchedKey = Object.keys(PATH_TITLE_MAP).find((key) =>
+    path.startsWith(key)
+  );
+  return matchedKey ? PATH_TITLE_MAP[matchedKey] : "Unknown";
+}
+
 function AdminHeader() {
+  const pathname = usePathname();
+  console.log(pathname);
   return (
     <header className='flex h-16 shrink-0 items-center justify-between gap-2 border-b pr-8 transition-[width,height]'>
       <div className='flex items-center gap-2 px-4'>
@@ -28,7 +44,7 @@ function AdminHeader() {
             </BreadcrumbItem>
             <BreadcrumbSeparator className='hidden md:block' />
             <BreadcrumbItem>
-              <BreadcrumbPage>Courses</BreadcrumbPage>
+              <BreadcrumbPage>{getTitleFromPath(pathname)}</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
