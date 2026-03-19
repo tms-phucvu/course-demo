@@ -28,7 +28,6 @@ function getTitleFromPath(path: string): string {
 
 function AdminHeader() {
   const pathname = usePathname();
-  console.log(pathname);
   return (
     <header className='flex h-16 shrink-0 items-center justify-between gap-2 border-b pr-8 transition-[width,height]'>
       <div className='flex items-center gap-2 px-4'>

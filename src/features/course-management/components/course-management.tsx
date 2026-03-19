@@ -28,6 +28,7 @@ import { useCourseDelete } from "@/features/course-management/hooks/use-course-d
 import { useCourseFilter } from "@/features/course-management/hooks/use-course-filter";
 import { useCoursePagination } from "@/features/course-management/hooks/use-course-pagination";
 import { useCourseSelection } from "@/features/course-management/hooks/use-course-selection";
+import { useCourses } from "@/features/course-management/hooks/use-courses";
 import {
   formatDate,
   getPageNumbers,
@@ -38,11 +39,23 @@ import { Link } from "@/i18n";
 import { Pencil, Plus, Trash2 } from "lucide-react";
 import { useLocale } from "next-intl";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export function CourseManagement() {
   const locale = useLocale();
   const [courses, setCourses] = useState(() => MOCK_COURSES);
+
+  const { data } = useCourses({
+    page: 1,
+    limit: 10,
+    name: "",
+  });
+
+  useEffect(() => {
+    if (data) {
+      console.log("courses:", data);
+    }
+  }, [data]);
 
   const {
     searchQuery,
