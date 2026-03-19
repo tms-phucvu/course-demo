@@ -28,7 +28,7 @@ import {
 import { cn } from "@/core/lib/utils";
 import { Role } from "@/features/auth/types";
 import { ROLES } from "@/features/user-management/mock/users";
-import { ManagementUser } from "@/features/user-management/types";
+import { User } from "@/features/user-management/types/user.types";
 import {
   AddUserFormData,
   addUserSchema,
@@ -48,8 +48,8 @@ const AVATAR_VALIDATION = {
 interface EditUserModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  user: ManagementUser | null;
-  onSave: (user: ManagementUser) => void;
+  user: User | null;
+  onSave: (user: User) => void;
 }
 
 export function EditUserModal({
@@ -173,7 +173,7 @@ export function EditUserModal({
   const onSubmit = useCallback(
     (data: AddUserFormData) => {
       if (!user) return;
-      const updatedUser: ManagementUser = {
+      const updatedUser: User = {
         ...user,
         name: data.name,
         avatarUrl: data.avatarUrl || undefined,

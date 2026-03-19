@@ -1,8 +1,8 @@
 import { Role } from "@/features/auth/types";
-import type { ManagementUser } from "../types";
+import type { User } from "../types/user.types";
 
-export const ROLES: ManagementUser["role"][] = [Role.ADMIN, Role.STUDENT];
-export const STATUSES: ManagementUser["status"][] = ["active", "inactive"];
+export const ROLES: User["role"][] = [Role.ADMIN, Role.STUDENT];
+export const STATUSES: User["status"][] = ["active", "inactive"];
 
 const NAMES = [
   "Stern Thireau",
@@ -60,7 +60,7 @@ function mockEmail(seed: number): string {
   return `${firstName}${seed + 1}@${domain}`;
 }
 
-export function getMockManagementUsers(): ManagementUser[] {
+export function getMockUsers(): User[] {
   return NAMES.map((name, i) => {
     return {
       id: `user-${i + 1}`,

@@ -25,102 +25,38 @@ import { cn } from "@/core/lib/utils";
 import { AddUserModal } from "@/features/user-management/components/add-user-modal";
 import { DeleteConfirmModal } from "@/features/user-management/components/delete-confirm-modal";
 import { EditUserModal } from "@/features/user-management/components/edit-user-modal";
-import { ManagementUser } from "@/features/user-management/types";
+import {
+  formatCreatedAt,
+  getInitials,
+  getPageNumbers,
+} from "@/features/user-management/lib/user.util";
+import { User } from "@/features/user-management/types/user.types";
 import { Pencil, Search, Trash2, UserPlus } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-import { getMockManagementUsers, ROLES, STATUSES } from "../mock/users";
+import { getMockUsers } from "../mock/users";
 
 const PER_PAGE = 10;
 
-function getInitials(name: string): string {
-  return name
-    .split(" ")
-    .map((s) => s[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase();
-}
-
-function formatCreatedAt(iso: string): string {
-  const d = new Date(iso);
-  return d.toLocaleDateString(undefined, {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
-}
-
-/** Build page numbers for pagination: [1, 2, 3, 'ellipsis', 10] etc. */
-function getPageNumbers(
-  totalPages: number,
-  currentPage: number
-): (number | "ellipsis")[] {
-  if (totalPages <= 7) {
-    return Array.from({ length: totalPages }, (_, i) => i + 1);
-  }
-  if (currentPage <= 4) {
-    return [1, 2, 3, 4, 5, "ellipsis", totalPages];
-  }
-  if (currentPage >= totalPages - 3) {
-    return [
-      1,
-      "ellipsis",
-      totalPages - 4,
-      totalPages - 3,
-      totalPages - 2,
-      totalPages - 1,
-      totalPages,
-    ];
-  }
-  return [
-    1,
-    "ellipsis",
-    currentPage - 1,
-    currentPage,
-    currentPage + 1,
-    "ellipsis",
-    totalPages,
-  ];
-}
-
 export function UserListTable() {
   const t = useTranslations("userManagement");
-  const [users, setUsers] = useState<ManagementUser[]>(() =>
-    getMockManagementUsers()
-  );
+  const [users, setUsers] = useState<User[]>(() => getMockUsers());
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [searchQuery, setSearchQuery] = useState("");
-  const [filterRole, setFilterRole] = useState<ManagementUser["role"] | "">("");
-  const [filterStatus, setFilterStatus] = useState<
-    ManagementUser["status"] | ""
-  >("");
   const [addUserOpen, setAddUserOpen] = useState(false);
-  const [editUser, setEditUser] = useState<ManagementUser | null>(null);
+  const [editUser, setEditUser] = useState<User | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<
     { type: "one"; id: string } | { type: "selected" } | null
   >(null);
 
   const filteredUsers = useMemo(() => {
-    let list = users;
-    if (filterRole) {
-      list = list.filter((u) => u.role === filterRole);
-    }
-    if (filterStatus) {
-      list = list.filter((u) => u.status === filterStatus);
-    }
+    const list = users;
     if (!searchQuery.trim()) return list;
     const q = searchQuery.trim().toLowerCase();
-    return list.filter(
-      (u) =>
-        u.name.toLowerCase().includes(q) ||
-        u.email.toLowerCase().includes(q) ||
-        u.role.toLowerCase().includes(q) ||
-        u.status.toLowerCase().includes(q)
-    );
-  }, [users, searchQuery, filterRole, filterStatus]);
+    return list.filter((u) => u.name.toLowerCase().includes(q));
+  }, [users, searchQuery]);
 
   const total = filteredUsers.length;
   const totalPages = Math.max(1, Math.ceil(total / PER_PAGE));
@@ -189,7 +125,7 @@ export function UserListTable() {
   }, [deleteConfirm, selectedIds, t]);
 
   const handleEditSave = useCallback(
-    (updatedUser: ManagementUser) => {
+    (updatedUser: User) => {
       setUsers((prev) =>
         prev.map((u) => (u.id === updatedUser.id ? updatedUser : u))
       );
@@ -200,7 +136,7 @@ export function UserListTable() {
   );
 
   const handleAddUserSuccess = useCallback(
-    (user: ManagementUser) => {
+    (user: User) => {
       setUsers((prev) => [user, ...prev]);
       toast.success(t("addUser.created"));
     },
@@ -213,7 +149,7 @@ export function UserListTable() {
     <div className='UserListTable flex w-full flex-col gap-4'>
       <div className='flex flex-wrap items-center justify-between gap-2'>
         <div className='flex flex-wrap items-center gap-2'>
-          <div className='relative max-w-sm min-w-[200px] flex-1'>
+          <div className='relative max-w-lg min-w-50 flex-1'>
             <Search className='text-muted-foreground pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2' />
             <Input
               type='search'
@@ -224,48 +160,6 @@ export function UserListTable() {
               aria-label={t("searchPlaceholder")}
             />
           </div>
-          <select
-            value={filterRole}
-            onChange={(e) =>
-              setFilterRole(
-                (e.target.value || "") as ManagementUser["role"] | ""
-              )
-            }
-            aria-label={t("filterRoleLabel")}
-            className={cn(
-              "border-input flex h-9 min-w-[120px] rounded-md border bg-transparent px-3 py-1 text-sm shadow-sm transition-colors",
-              "focus-visible:ring-ring focus-visible:ring-1 focus-visible:outline-none",
-              "disabled:cursor-not-allowed disabled:opacity-50"
-            )}
-          >
-            <option value=''>{t("filterAll")}</option>
-            {ROLES.map((role) => (
-              <option key={role} value={role}>
-                {t(`role_${role.toLocaleLowerCase()}`)}
-              </option>
-            ))}
-          </select>
-          <select
-            value={filterStatus}
-            onChange={(e) =>
-              setFilterStatus(
-                (e.target.value || "") as ManagementUser["status"] | ""
-              )
-            }
-            aria-label={t("filterStatusLabel")}
-            className={cn(
-              "border-input flex h-9 min-w-[140px] rounded-md border bg-transparent px-3 py-1 text-sm shadow-sm transition-colors",
-              "focus-visible:ring-ring focus-visible:ring-1 focus-visible:outline-none",
-              "disabled:cursor-not-allowed disabled:opacity-50"
-            )}
-          >
-            <option value=''>{t("filterAll")}</option>
-            {STATUSES.map((status) => (
-              <option key={status} value={status}>
-                {t(`status_${status}`)}
-              </option>
-            ))}
-          </select>
         </div>
         <div className='flex flex-wrap items-center gap-2'>
           <Button
@@ -292,11 +186,11 @@ export function UserListTable() {
       </div>
 
       <div className='overflow-x-auto rounded-md border'>
-        <Table className='min-w-[900px]'>
+        <Table className='min-w-225'>
           <TableHeader>
             <TableRow>
               <TableHead
-                className='bg-background group-hover:bg-muted/50 sticky left-0 z-20 w-[3.25rem] min-w-[3.25rem] shadow-[4px_0_6px_-2px_rgba(0,0,0,0.05)]'
+                className='bg-background group-hover:bg-muted/50 sticky left-0 z-20 w-13 min-w-13 shadow-[4px_0_6px_-2px_rgba(0,0,0,0.05)]'
                 aria-label={t("selectAll")}
               >
                 <Checkbox
@@ -305,7 +199,7 @@ export function UserListTable() {
                   aria-label={t("selectAll")}
                 />
               </TableHead>
-              <TableHead className='bg-background group-hover:bg-muted/50 sticky left-[3.25rem] z-10 min-w-[220px] shadow-[4px_0_6px_-2px_rgba(0,0,0,0.05)]'>
+              <TableHead className='bg-background group-hover:bg-muted/50 sticky left-13 z-10 min-w-55 shadow-[4px_0_6px_-2px_rgba(0,0,0,0.05)]'>
                 {t("name")}
               </TableHead>
               <TableHead>{t("email")}</TableHead>
@@ -330,7 +224,7 @@ export function UserListTable() {
             ) : (
               pageUsers.map((user) => (
                 <TableRow key={user.id} className='group'>
-                  <TableCell className='bg-background group-hover:bg-muted/50 sticky left-0 z-20 w-[3.25rem] min-w-[3.25rem] shadow-[4px_0_6px_-2px_rgba(0,0,0,0.05)]'>
+                  <TableCell className='bg-background group-hover:bg-muted/50 sticky left-0 z-20 w-13 min-w-13 shadow-[4px_0_6px_-2px_rgba(0,0,0,0.05)]'>
                     <Checkbox
                       checked={selectedIds.has(user.id)}
                       onCheckedChange={(checked) =>
@@ -339,7 +233,7 @@ export function UserListTable() {
                       aria-label={t("selectUser", { name: user.name })}
                     />
                   </TableCell>
-                  <TableCell className='bg-background group-hover:bg-muted/50 sticky left-[3.25rem] z-10 min-w-[220px] shadow-[4px_0_6px_-2px_rgba(0,0,0,0.05)]'>
+                  <TableCell className='bg-background group-hover:bg-muted/50 sticky left-13 z-10 min-w-55 shadow-[4px_0_6px_-2px_rgba(0,0,0,0.05)]'>
                     <div className='flex items-center gap-3'>
                       <Avatar className='size-9 shrink-0'>
                         <AvatarImage src={user.avatarUrl ?? undefined} alt='' />

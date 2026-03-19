@@ -28,7 +28,7 @@ import {
 import { cn } from "@/core/lib/utils";
 import { Role } from "@/features/auth/types";
 import { ROLES } from "@/features/user-management/mock/users";
-import { ManagementUser } from "@/features/user-management/types";
+import { User } from "@/features/user-management/types/user.types";
 import {
   AddUserFormData,
   addUserSchema,
@@ -48,7 +48,7 @@ const AVATAR_VALIDATION = {
 interface AddUserModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSuccess: (user: ManagementUser) => void;
+  onSuccess: (user: User) => void;
 }
 
 export function AddUserModal({
@@ -158,7 +158,7 @@ export function AddUserModal({
 
   const onSubmit = useCallback(
     (data: AddUserFormData) => {
-      const newUser: ManagementUser = {
+      const newUser: User = {
         id: `user-${Date.now()}`,
         name: data.name,
         avatarUrl: data.avatarUrl || undefined,

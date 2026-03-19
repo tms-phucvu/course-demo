@@ -1,2 +1,2 @@
 export { UserListTable } from "./components/user-list-table";
-export type { ManagementUser, UserStatus } from "./types";
+export type { User, UserStatus } from "./types/user.types";

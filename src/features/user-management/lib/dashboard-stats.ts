@@ -1,4 +1,4 @@
-// import type { ManagementUser } from "../types";
+// import type { User } from "../types";
 // import {
 //   PREFECTURE_EN_TO_JA,
 //   PREFECTURE_JA_TO_EN,
@@ -6,7 +6,7 @@
 // } from "../constants/prefecture-map";
 
 // /** Mock monthly revenue per plan (for dashboard total revenue) */
-// const REVENUE_BY_PLAN: Record<ManagementUser["plan"], number> = {
+// const REVENUE_BY_PLAN: Record<User["plan"], number> = {
 //   free: 0,
 //   silver: 10,
 //   gold: 30,
@@ -33,7 +33,7 @@
 // /**
 //  * Compute dashboard stats from users list.
 //  */
-// export function getDashboardStats(users: ManagementUser[]): DashboardStats {
+// export function getDashboardStats(users: User[]): DashboardStats {
 //   let silver = 0;
 //   let gold = 0;
 //   let diamond = 0;
@@ -68,7 +68,7 @@
 //  * Returns array of { month, monthShort, yearMonth, count } sorted by yearMonth.
 //  */
 // export function getUsersByMonth(
-//   users: ManagementUser[],
+//   users: User[],
 //   range?: { start: Date; end: Date }
 // ): MonthCount[] {
 //   const monthNames = [
@@ -161,7 +161,7 @@
 //  * one entry per Japanese prefecture with { name: jaName, value: count }.
 //  */
 // export function getUsersByPrefecture(
-//   users: ManagementUser[]
+//   users: User[]
 // ): PrefectureCount[] {
 //   const countByEn = new Map<string, number>();
 //   for (const en of Object.keys(PREFECTURE_EN_TO_JA)) {
@@ -182,7 +182,7 @@
 //  * Count users by prefecture (English name). Returns a map for @react-map/japan cityColors.
 //  */
 // export function getUsersByPrefectureCountMap(
-//   users: ManagementUser[]
+//   users: User[]
 // ): Record<string, number> {
 //   const countByEn: Record<string, number> = {};
 //   for (const en of Object.keys(PREFECTURE_EN_TO_JA)) {
