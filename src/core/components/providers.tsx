@@ -1,6 +1,7 @@
 "use client";
 
 import { Toaster } from "@/components/ui/sonner";
+import { AuthProvider } from "@/core/components/auth-provider";
 import { queryClient } from "@/core/lib/react-query";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { SessionProvider } from "next-auth/react";
@@ -20,7 +21,7 @@ export function Providers({ children }: ProvidersProps) {
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <AuthProvider>{children}</AuthProvider>
           <Toaster richColors position='top-right' />
         </ThemeProvider>
       </SessionProvider>

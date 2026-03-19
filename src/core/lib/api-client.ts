@@ -5,7 +5,6 @@ import axios, {
   AxiosResponse,
   InternalAxiosRequestConfig,
 } from "axios";
-import { getSession } from "next-auth/react";
 
 // API Error type
 export interface ApiError {
@@ -22,6 +21,12 @@ export interface ApiResponse<T> {
   success: boolean;
 }
 
+let accessToken: string | null = null;
+
+export const setAccessToken = (token: string | null) => {
+  accessToken = token;
+};
+
 // Create axios instance
 const apiClient: AxiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL || "/api",
@@ -33,20 +38,13 @@ const apiClient: AxiosInstance = axios.create({
 
 // Request interceptor - Add auth token
 apiClient.interceptors.request.use(
-  async (config: InternalAxiosRequestConfig) => {
-    if (typeof window !== "undefined") {
-      const session = await getSession();
-
-      if (session?.user?.accessToken) {
-        config.headers.Authorization = `Bearer ${session.user.accessToken}`;
-      }
+  (config: InternalAxiosRequestConfig) => {
+    if (accessToken) {
+      config.headers.Authorization = `Bearer ${accessToken}`;
     }
-
     return config;
   },
-  (error: AxiosError) => {
-    return Promise.reject(error);
-  }
+  (error: AxiosError) => Promise.reject(error)
 );
 
 // Response interceptor - Handle errors
