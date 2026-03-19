@@ -27,7 +27,10 @@ import {
 } from "@/core/image-handle";
 import { cn } from "@/core/lib/utils";
 import { Role } from "@/features/auth/types";
-import { ROLES } from "@/features/user-management/mock/users";
+import {
+  AVATAR_VALIDATION,
+  ROLES,
+} from "@/features/user-management/constants/user.constants";
 import { User } from "@/features/user-management/types/user.types";
 import {
   AddUserFormData,
@@ -38,12 +41,6 @@ import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useState } from "react";
 import type { Resolver } from "react-hook-form";
 import { useForm } from "react-hook-form";
-
-const AVATAR_VALIDATION = {
-  maxSizeInMb: 2,
-  allowedMimeTypes: ["image/jpeg", "image/png", "image/webp"],
-  maxFiles: 1,
-};
 
 interface EditUserModalProps {
   open: boolean;
