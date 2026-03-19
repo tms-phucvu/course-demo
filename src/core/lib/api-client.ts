@@ -34,14 +34,14 @@ const apiClient: AxiosInstance = axios.create({
 // Request interceptor - Add auth token
 apiClient.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
-    // Only add token for client-side requests
     if (typeof window !== "undefined") {
       const session = await getSession();
-      if (session?.user) {
-        // Add authorization header if needed
-        // config.headers.Authorization = `Bearer ${session.accessToken}`;
+
+      if (session?.user?.accessToken) {
+        config.headers.Authorization = `Bearer ${session.user.accessToken}`;
       }
     }
+
     return config;
   },
   (error: AxiosError) => {

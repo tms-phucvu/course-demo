@@ -25,6 +25,11 @@ import { cn } from "@/core/lib/utils";
 import { AddUserModal } from "@/features/user-management/components/add-user-modal";
 import { DeleteConfirmModal } from "@/features/user-management/components/delete-confirm-modal";
 import { EditUserModal } from "@/features/user-management/components/edit-user-modal";
+import { useCreateUser } from "@/features/user-management/hooks/use-create-user";
+import { useDeleteManyUsers } from "@/features/user-management/hooks/use-delete-many-users";
+import { useDeleteUser } from "@/features/user-management/hooks/use-delete-user";
+import { useUpdateUser } from "@/features/user-management/hooks/use-update-user";
+import { useUsers } from "@/features/user-management/hooks/use-users";
 import {
   formatCreatedAt,
   getInitials,
@@ -35,13 +40,11 @@ import { Pencil, Search, Trash2, UserPlus } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-import { getMockUsers } from "../mock/users";
 
 const PER_PAGE = 10;
 
 export function UserListTable() {
   const t = useTranslations("userManagement");
-  const [users, setUsers] = useState<User[]>(() => getMockUsers());
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [searchQuery, setSearchQuery] = useState("");
@@ -51,30 +54,34 @@ export function UserListTable() {
     { type: "one"; id: string } | { type: "selected" } | null
   >(null);
 
-  const filteredUsers = useMemo(() => {
-    const list = users;
-    if (!searchQuery.trim()) return list;
-    const q = searchQuery.trim().toLowerCase();
-    return list.filter((u) => u.name.toLowerCase().includes(q));
-  }, [users, searchQuery]);
+  const usersQuery = useUsers({
+    page: currentPage,
+    limit: PER_PAGE,
+    name: searchQuery.trim(),
+  });
 
-  const total = filteredUsers.length;
+  const createUserMutation = useCreateUser();
+  const updateUserMutation = useUpdateUser();
+  const deleteUserMutation = useDeleteUser();
+  const deleteManyUsersMutation = useDeleteManyUsers();
+
+  const pageUsers = useMemo(
+    () => usersQuery.data?.items ?? [],
+    [usersQuery.data?.items]
+  );
+  const total = usersQuery.data?.total ?? 0;
   const totalPages = Math.max(1, Math.ceil(total / PER_PAGE));
-
-  useEffect(() => {
-    setCurrentPage((prev) => {
-      if (prev > totalPages) return totalPages;
-      return prev;
-    });
-  }, [totalPages]);
-
   const startIndex = total === 0 ? 0 : (currentPage - 1) * PER_PAGE;
   const endIndex = Math.min(startIndex + PER_PAGE, total);
   const pageNumbers = getPageNumbers(totalPages, currentPage);
-  const pageUsers = useMemo(
-    () => filteredUsers.slice(startIndex, endIndex),
-    [filteredUsers, startIndex, endIndex]
-  );
+
+  useEffect(() => {
+    if (currentPage > totalPages) setCurrentPage(totalPages);
+  }, [currentPage, totalPages]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery]);
 
   const toggleSelected = useCallback((id: string, checked: boolean) => {
     setSelectedIds((prev) => {
@@ -109,38 +116,102 @@ export function UserListTable() {
 
   const handleDeleteConfirm = useCallback(() => {
     if (!deleteConfirm) return;
+
+    const closeModal = () => {
+      setDeleteConfirm(null);
+    };
+
     if (deleteConfirm.type === "one") {
-      setUsers((prev) => prev.filter((u) => u.id !== deleteConfirm.id));
-      setSelectedIds((prev) => {
-        const next = new Set(prev);
-        next.delete(deleteConfirm.id);
-        return next;
+      deleteUserMutation.mutate(deleteConfirm.id, {
+        onSuccess: () => {
+          setSelectedIds((prev) => {
+            const next = new Set(prev);
+            next.delete(deleteConfirm.id);
+            return next;
+          });
+          toast.success(t("deleteSuccess"));
+        },
+        onError: (error: Error) => {
+          toast.error(error.message || t("deleteFailed"));
+        },
       });
-    } else {
-      setUsers((prev) => prev.filter((u) => !selectedIds.has(u.id)));
-      setSelectedIds(new Set());
+
+      closeModal();
+      return;
     }
-    setDeleteConfirm(null);
-    toast.success(t("deleteSuccess"));
-  }, [deleteConfirm, selectedIds, t]);
+
+    const idsToDelete = Array.from(selectedIds);
+    if (idsToDelete.length === 0) {
+      closeModal();
+      return;
+    }
+
+    deleteManyUsersMutation.mutate(idsToDelete, {
+      onSuccess: () => {
+        setSelectedIds(new Set());
+        toast.success(t("deleteSuccess"));
+      },
+      onError: (error: Error) => {
+        toast.error(error.message || t("deleteFailed"));
+      },
+    });
+
+    closeModal();
+  }, [
+    deleteConfirm,
+    selectedIds,
+    deleteUserMutation,
+    deleteManyUsersMutation,
+    t,
+  ]);
 
   const handleEditSave = useCallback(
     (updatedUser: User) => {
-      setUsers((prev) =>
-        prev.map((u) => (u.id === updatedUser.id ? updatedUser : u))
+      updateUserMutation.mutate(
+        {
+          id: updatedUser.id,
+          data: {
+            name: updatedUser.name,
+            email: updatedUser.email,
+            role: updatedUser.role,
+            // status intentionally omitted because API does not support it yet
+          },
+        },
+        {
+          onSuccess: () => {
+            setEditUser(null);
+            toast.success(t("editUserModal.saved"));
+          },
+          onError: (error: Error) => {
+            toast.error(error.message || t("editUserModal.saveFailed"));
+          },
+        }
       );
-      setEditUser(null);
-      toast.success(t("editUserModal.saved"));
     },
-    [t]
+    [updateUserMutation, t]
   );
 
   const handleAddUserSuccess = useCallback(
     (user: User) => {
-      setUsers((prev) => [user, ...prev]);
-      toast.success(t("addUser.created"));
+      createUserMutation.mutate(
+        {
+          name: user.name,
+          email: user.email,
+          role: user.role,
+          password: "changeme123",
+        },
+        {
+          onSuccess: () => {
+            setAddUserOpen(false);
+            toast.success(t("addUser.created"));
+          },
+          onError: (error: Error) => {
+            toast.error(error.message || t("addUser.createFailed"));
+          },
+        }
+      );
     },
-    [t]
+    [createUserMutation, t]
   );
 
   const selectedCount = selectedIds.size;
@@ -251,17 +322,23 @@ export function UserListTable() {
                     {t(`role_${user.role.toLocaleLowerCase()}`)}
                   </TableCell>
                   <TableCell>
-                    <span
-                      className={cn(
-                        "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium",
-                        user.status === "active"
-                          ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
-                          : "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400"
-                      )}
-                      role='status'
-                    >
-                      {t(`status_${user.status}`)}
-                    </span>
+                    {(() => {
+                      const statusValue = user.status ?? "active";
+                      const isActive = statusValue === "active";
+                      return (
+                        <span
+                          className={cn(
+                            "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium",
+                            isActive
+                              ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
+                              : "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400"
+                          )}
+                          role='status'
+                        >
+                          {t(`status_${statusValue}`)}
+                        </span>
+                      );
+                    })()}
                   </TableCell>
                   <TableCell className='text-muted-foreground'>
                     {formatCreatedAt(user.createdAt)}
@@ -391,7 +468,8 @@ export function UserListTable() {
         description={
           deleteConfirm?.type === "one"
             ? t("deleteConfirm.descriptionOne", {
-                name: users.find((u) => u.id === deleteConfirm.id)?.name ?? "",
+                name:
+                  pageUsers.find((u) => u.id === deleteConfirm.id)?.name ?? "",
               })
             : t("deleteConfirm.descriptionSelected", {
                 count: selectedCount,

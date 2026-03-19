@@ -20,7 +20,7 @@ export interface UserFilters {
 }
 
 export interface UserListResponse {
-  item: User[];
+  items: User[];
   total: number;
   page: number;
   limit: number;
