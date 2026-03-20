@@ -20,39 +20,42 @@ import { Textarea } from "@/components/ui/textarea";
 import { Info, Trash2, UploadCloud, X } from "lucide-react";
 import Image from "next/image";
 import {
-  Controller,
   Control,
+  Controller,
   FieldErrors,
   UseFormRegister,
+  UseFormSetValue,
+  UseFormWatch,
   useFieldArray,
 } from "react-hook-form";
 
+import { useUploadFile } from "@/features/course-management/hooks/use-upload-file";
 import { CourseFormValues } from "@/features/course-management/schemas/course.schemas";
-import { isValidImageName } from "@/features/course-management/utils/course-management.utils";
+import {
+  isValidImage,
+  isValidImageName,
+} from "@/features/course-management/utils/course-management.utils";
+import { useRef } from "react";
+import { toast } from "sonner";
 
 interface BasicInfoFormProps {
   register: UseFormRegister<CourseFormValues>;
   control: Control<CourseFormValues>;
   errors: FieldErrors<CourseFormValues>;
-  thumbnail: string;
-  isUploadingImage: boolean;
-  inputRef: React.RefObject<HTMLInputElement | null>;
-  onClickUpload: () => void;
-  onChangeUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onClearThumbnail: () => void;
+  setValue: UseFormSetValue<CourseFormValues>;
+  watch: UseFormWatch<CourseFormValues>;
 }
 
 export function BasicInfoForm({
   register,
   control,
   errors,
-  thumbnail,
-  isUploadingImage,
-  inputRef,
-  onClickUpload,
-  onChangeUpload,
-  onClearThumbnail,
+  setValue,
+  watch,
 }: BasicInfoFormProps) {
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const { mutate: uploadImage, isPending: isUploadingImage } = useUploadFile();
+
   const {
     fields: requirementFields,
     append: appendRequirement,
@@ -70,6 +73,28 @@ export function BasicInfoForm({
     control,
     name: "learningOutcomes",
   });
+
+  const thumbnail = watch("thumbnail");
+  const onClickUpload = () => {
+    inputRef.current?.click();
+  };
+  const onChangeUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!isValidImage(file)) {
+      toast.error("Only accept PNG, JPG, WEBP");
+      return;
+    }
+    uploadImage(file, {
+      onSuccess: (res) => {
+        setValue("thumbnail", res.url, { shouldValidate: true });
+      },
+    });
+    e.target.value = "";
+  };
+  const onClearThumbnail = () => {
+    setValue("thumbnail", "", { shouldValidate: true });
+  };
 
   return (
     <div className='flex flex-col gap-4'>

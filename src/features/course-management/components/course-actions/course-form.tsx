@@ -1,22 +1,19 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BasicInfoForm } from "@/features/course-management/components/course-actions/basic-info-form";
 import { CurriculumForm } from "@/features/course-management/components/course-actions/curriculum-form";
 import { useCreateCourse } from "@/features/course-management/hooks/use-create-course";
 import { useUpdateCourse } from "@/features/course-management/hooks/use-update-course";
-import { useUploadFile } from "@/features/course-management/hooks/use-upload-file";
 import {
   CourseFormValues,
   courseSchema,
 } from "@/features/course-management/schemas/course.schemas";
-import { isValidImage } from "@/features/course-management/utils/course-management.utils";
 import { transformCoursePayload } from "@/features/course-management/utils/transform-course.utils";
 import { Link, useRouter } from "@/i18n";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRef } from "react";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
 
 interface CourseFormProps {
   courseId?: string;
@@ -25,11 +22,8 @@ interface CourseFormProps {
 
 function CourseForm({ courseId, formData }: CourseFormProps) {
   const router = useRouter();
-  const inputRef = useRef<HTMLInputElement | null>(null);
-
   const { mutate: createCourse, isPending: isCreating } = useCreateCourse();
   const { mutate: updateCourse, isPending: isUpdating } = useUpdateCourse();
-  const { mutate: uploadImage, isPending: isUploadingImage } = useUploadFile();
   const {
     register,
     control,
@@ -55,28 +49,6 @@ function CourseForm({ courseId, formData }: CourseFormProps) {
       ],
     },
   });
-  const thumbnail = watch("thumbnail");
-  const onClickUpload = () => {
-    inputRef.current?.click();
-  };
-  const onChangeUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    if (!isValidImage(file)) {
-      toast.error("Only accept PNG, JPG, WEBP");
-      return;
-    }
-    uploadImage(file, {
-      onSuccess: (res) => {
-        setValue("thumbnail", res.url, { shouldValidate: true });
-      },
-    });
-    e.target.value = "";
-  };
-
-  const onClearThumbnail = () => {
-    setValue("thumbnail", "", { shouldValidate: true });
-  };
 
   function onSubmit(data: CourseFormValues) {
     const dataPayload = transformCoursePayload(data);
@@ -104,18 +76,25 @@ function CourseForm({ courseId, formData }: CourseFormProps) {
         {!courseId ? "Create course" : "Edit course"}
       </h1>
       <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-10'>
-        <BasicInfoForm
-          register={register}
-          control={control}
-          errors={errors}
-          thumbnail={thumbnail}
-          isUploadingImage={isUploadingImage}
-          inputRef={inputRef}
-          onClickUpload={onClickUpload}
-          onChangeUpload={onChangeUpload}
-          onClearThumbnail={onClearThumbnail}
-        />
-        <CurriculumForm register={register} control={control} />
+        <Tabs defaultValue='basicInfo'>
+          <TabsList className='mb-4'>
+            <TabsTrigger value='basicInfo'>Information Course</TabsTrigger>
+            <TabsTrigger value='curriculum'>Structure Course</TabsTrigger>
+          </TabsList>
+          <TabsContent value='basicInfo'>
+            <BasicInfoForm
+              register={register}
+              control={control}
+              errors={errors}
+              setValue={setValue}
+              watch={watch}
+            />
+          </TabsContent>
+          <TabsContent value='curriculum'>
+            <CurriculumForm register={register} control={control} />
+          </TabsContent>
+        </Tabs>
+
         {/* Action for Course Form */}
         <div className='flex justify-end gap-4'>
           <Link href={"/admin/courses"}>
