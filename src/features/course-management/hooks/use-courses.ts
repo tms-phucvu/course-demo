@@ -6,10 +6,10 @@ import {
 import { useQuery } from "@tanstack/react-query";
 
 export const useCourses = (filters: CourseFilters) => {
-  const { page = 1, limit = 10, name } = filters;
+  const { page = 1, limit = 10, title } = filters;
 
   return useQuery<CourseListResponse>({
-    queryKey: ["courses", page, limit, name],
-    queryFn: () => getAllCourses({ page, limit, name }),
+    queryKey: ["courses", page, limit, title],
+    queryFn: () => getAllCourses({ page, limit, title }),
   });
 };

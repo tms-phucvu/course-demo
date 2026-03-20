@@ -11,6 +11,19 @@ export const formatDate = ({
     day: "2-digit",
   });
 
+export const formatDateFromISO = ({
+  value,
+  locale,
+}: {
+  value: string; // ISO string
+  locale: string;
+}) =>
+  new Date(value).toLocaleDateString(locale, {
+    year: "numeric",
+    month: "short",
+    day: "2-digit",
+  });
+
 export const getPageNumbers = ({
   currentPage,
   totalPages,
@@ -34,4 +47,8 @@ export const getPageNumbers = ({
   }
 
   return pages;
+};
+
+export const isValidImage = (url: string) => {
+  return /\.(jpg|jpeg|png|webp)$/i.test(url);
 };

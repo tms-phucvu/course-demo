@@ -37,6 +37,7 @@ export interface Course {
   totalSections: number;
   totalLessons: number;
   totalDurationSeconds: number;
+  totalDuration?: number;
   sections: Section[];
 }
 
@@ -44,13 +45,10 @@ export interface Course {
 export interface CourseFilters {
   page: number;
   limit: number;
-  name?: string;
+  title?: string;
 }
 
-export type CourseResponse = Omit<
-  Course,
-  "totalSections" | "totalLessons" | "totalDurationSeconds" | "sections"
->;
+export type CourseResponse = Omit<Course, "sections">;
 
 export interface CourseListResponse {
   items: CourseResponse[];

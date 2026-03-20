@@ -13,8 +13,8 @@ export async function getAllCourses(
 ): Promise<CourseListResponse> {
   const params: Record<string, string | number> = {};
 
-  if (filters?.name) {
-    params.name = filters.name;
+  if (filters?.title) {
+    params.title = filters.title;
   }
 
   params.page = filters?.page ?? 1;

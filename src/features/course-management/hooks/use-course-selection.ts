@@ -1,4 +1,4 @@
-import { Course } from "@/features/course/types/course.types";
+import { Course } from "@/features/course-management/types/course.types";
 import { useCallback, useMemo, useState } from "react";
 
 interface Props {

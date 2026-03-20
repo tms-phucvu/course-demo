@@ -23,59 +23,55 @@ import { CourseDeleteConfirmDialog } from "@/features/course-management/componen
 import {
   Level,
   LEVELS,
+  PER_PAGE,
 } from "@/features/course-management/constants/course-management.constants";
-import { useCourseDelete } from "@/features/course-management/hooks/use-course-delete";
-import { useCourseFilter } from "@/features/course-management/hooks/use-course-filter";
-import { useCoursePagination } from "@/features/course-management/hooks/use-course-pagination";
 import { useCourseSelection } from "@/features/course-management/hooks/use-course-selection";
 import { useCourses } from "@/features/course-management/hooks/use-courses";
+import { useDeleteCourse } from "@/features/course-management/hooks/use-delete-course";
+import { useDeleteManyCourses } from "@/features/course-management/hooks/use-delete-many-courses";
+import { Course } from "@/features/course-management/types/course.types";
 import {
-  formatDate,
+  formatDateFromISO,
   getPageNumbers,
+  isValidImage,
 } from "@/features/course-management/utils/course-management.utils";
-import { MOCK_COURSES } from "@/features/course/mock/course-data";
 import { formatDuration } from "@/features/course/utils/course.utils";
 import { Link } from "@/i18n";
 import { Pencil, Plus, Trash2 } from "lucide-react";
 import { useLocale } from "next-intl";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export function CourseManagement() {
   const locale = useLocale();
-  const [courses, setCourses] = useState(() => MOCK_COURSES);
 
-  const { data } = useCourses({
-    page: 1,
-    limit: 10,
-    name: "",
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filterLevel, setFilterLevel] = useState<Level>("all");
+  const [deleteConfirm, setDeleteConfirm] = useState<
+    | { type: "one"; id: string; title: string }
+    | { type: "selected"; selectedIds: Set<string>; selectedCount: number }
+    | null
+  >(null);
+
+  const { data, isError } = useCourses({
+    page: currentPage,
+    limit: PER_PAGE,
+    title: searchQuery,
   });
+  const deleteCourseMutation = useDeleteCourse();
+  const deleteManyCoursesMutation = useDeleteManyCourses();
 
-  useEffect(() => {
-    if (data) {
-      console.log("courses:", data);
-    }
-  }, [data]);
+  const pageCourses = (data?.items ?? []) as Course[];
+  const total = data?.total ?? 1;
+  const totalPages = Math.max(1, Math.ceil(total / PER_PAGE));
+  const startIndex = total === 0 ? 0 : (currentPage - 1) * PER_PAGE;
+  const endIndex = Math.min(startIndex + PER_PAGE, total);
 
-  const {
-    searchQuery,
-    setSearchQuery,
-    filterLevel,
-    setFilterLevel,
-    filteredCourses,
-  } = useCourseFilter({ courses });
-
-  const {
-    pageCourses,
-    currentPage,
-    total,
-    totalPages,
-    startIndex,
-    endIndex,
-    handlePrev,
-    handleNext,
-    handleGoToPage,
-  } = useCoursePagination({ filteredCourses });
+  const handlePrev = () => setCurrentPage((p) => Math.max(1, p - 1));
+  const handleNext = () => setCurrentPage((p) => Math.min(totalPages, p + 1));
+  const handleGoToPage = (page: number) =>
+    setCurrentPage(Math.min(Math.max(1, page), totalPages));
 
   const {
     selectedIds,
@@ -86,11 +82,36 @@ export function CourseManagement() {
     clearSelection,
   } = useCourseSelection({ pageCourses });
 
-  const { deleteConfirm, setDeleteConfirm, handleConfirmDelete } =
-    useCourseDelete({
-      setCourses,
-      clearSelection,
-    });
+  const handleConfirmDelete = () => {
+    if (!deleteConfirm) return;
+
+    if (deleteConfirm.type === "one") {
+      deleteCourseMutation.mutate(deleteConfirm.id, {
+        onSuccess: () => {
+          setDeleteConfirm(null);
+          clearSelection();
+        },
+      });
+    } else {
+      const idsToDelete = Array.from(deleteConfirm.selectedIds);
+      if (idsToDelete.length === 0) return;
+
+      deleteManyCoursesMutation.mutate(idsToDelete, {
+        onSuccess: () => {
+          setDeleteConfirm(null);
+          clearSelection();
+        },
+      });
+    }
+  };
+
+  if (isError) {
+    return (
+      <div className='CourseList p-6'>
+        <p>Failed to load courses. Please try again later.</p>
+      </div>
+    );
+  }
 
   return (
     <div className='CourseList flex w-full flex-col gap-6'>
@@ -108,6 +129,7 @@ export function CourseManagement() {
           <Select
             value={filterLevel}
             onValueChange={(value) => setFilterLevel(value as Level)}
+            disabled={true}
           >
             <SelectTrigger className='h-9 w-40'>
               <SelectValue placeholder='All levels' />
@@ -198,7 +220,11 @@ export function CourseManagement() {
                       <div className='flex items-center gap-3'>
                         <div className='bg-muted relative h-12 w-16 overflow-hidden rounded-md'>
                           <Image
-                            src={course.thumbnail}
+                            src={
+                              isValidImage(course.thumbnail)
+                                ? course.thumbnail
+                                : "/image/fallback_course.webp"
+                            }
                             alt={course.title}
                             fill
                             sizes='64px'
@@ -214,25 +240,25 @@ export function CourseManagement() {
                           </p>
                           <p
                             className='text-muted-foreground truncate text-xs'
-                            title={course.author}
+                            title={course.slug ?? "Unknown"}
                           >
-                            {course.author}
+                            {course.slug ?? "Unknown"}
                           </p>
                         </div>
                       </div>
                     </TableCell>
                     <TableCell>{course.level}</TableCell>
                     <TableCell>
-                      {formatDate({ value: course.createdAt, locale })}
+                      {formatDateFromISO({ value: course.createdAt, locale })}
                     </TableCell>
                     <TableCell className='text-right'>
-                      {course.totalSections}
+                      {course.totalSections ?? "--:--"}
                     </TableCell>
                     <TableCell className='text-right'>
-                      {course.totalLessons}
+                      {course.totalLessons ?? "--:--"}
                     </TableCell>
                     <TableCell className='text-right'>
-                      {formatDuration(course.totalDuration)}
+                      {formatDuration(course.totalDuration ?? 0)}
                     </TableCell>
                     <TableCell className='text-right'>
                       <div className='flex items-center justify-end gap-1'>
@@ -254,7 +280,7 @@ export function CourseManagement() {
                               type: "one",
                               id: course.id,
                               title:
-                                courses.find((c) => c.id === course.id)
+                                pageCourses.find((c) => c.id === course.id)
                                   ?.title ?? "",
                             })
                           }
