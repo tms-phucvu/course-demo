@@ -20,10 +20,15 @@ import { Textarea } from "@/components/ui/textarea";
 import { SortableSectionCard } from "@/features/course-management/components/section-field/sortable-section-card";
 import { useCreateCourse } from "@/features/course-management/hooks/use-create-course";
 import { useUpdateCourse } from "@/features/course-management/hooks/use-update-course";
+import { useUploadFile } from "@/features/course-management/hooks/use-upload-file";
 import {
   CourseFormValues,
   courseSchema,
 } from "@/features/course-management/schemas/course.schemas";
+import {
+  isValidImage,
+  isValidImageName,
+} from "@/features/course-management/utils/course-management.utils";
 import { transformCoursePayload } from "@/features/course-management/utils/transform-course.utils";
 import { Link, useRouter } from "@/i18n";
 import {
@@ -38,8 +43,11 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Info, List, Trash2, UploadCloud } from "lucide-react";
+import { Info, List, Trash2, UploadCloud, X } from "lucide-react";
+import Image from "next/image";
+import { useRef } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 interface CourseFormProps {
   courseId?: string;
@@ -48,11 +56,16 @@ interface CourseFormProps {
 
 function CourseForm({ courseId, formData }: CourseFormProps) {
   const router = useRouter();
+  const inputRef = useRef<HTMLInputElement | null>(null);
+
   const { mutate: createCourse, isPending: isCreating } = useCreateCourse();
   const { mutate: updateCourse, isPending: isUpdating } = useUpdateCourse();
+  const { mutate: uploadImage, isPending: isUploadingImage } = useUploadFile();
   const {
     register,
     control,
+    setValue,
+    watch,
     formState: { errors, isSubmitting },
     handleSubmit,
   } = useForm<CourseFormValues>({
@@ -60,6 +73,7 @@ function CourseForm({ courseId, formData }: CourseFormProps) {
     defaultValues: formData || {
       title: "",
       description: "",
+      thumbnail: "",
       language: "",
       tags: "",
       requirements: [{ value: "" }],
@@ -72,6 +86,24 @@ function CourseForm({ courseId, formData }: CourseFormProps) {
       ],
     },
   });
+  const thumbnail = watch("thumbnail");
+  const onClickUpload = () => {
+    inputRef.current?.click();
+  };
+  const onChangeUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!isValidImage(file)) {
+      toast.error("Only accept PNG, JPG, WEBP");
+      return;
+    }
+    uploadImage(file, {
+      onSuccess: (res) => {
+        setValue("thumbnail", res.url, { shouldValidate: true });
+      },
+    });
+    e.target.value = "";
+  };
 
   function onSubmit(data: CourseFormValues) {
     const dataPayload = transformCoursePayload(data);
@@ -181,22 +213,64 @@ function CourseForm({ courseId, formData }: CourseFormProps) {
                 </div>
 
                 {/* Thumbnail */}
-                <div className='space-y-6'>
-                  <div className='space-y-2'>
-                    <FieldLabel>Course Thumbnail</FieldLabel>
-                    <div className='group bg-background hover:bg-border relative flex h-48 cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed p-8 transition-colors'>
-                      <div className='bg-border group-hover:bg-background mb-2 rounded-full p-2'>
-                        <UploadCloud className='h-5 w-5 text-slate-600' />
-                      </div>
-                      <p className='text-xs font-medium text-slate-600'>
-                        Choose Image
-                      </p>
-                      <p className='mt-2 text-center text-[10px] text-slate-400'>
-                        Recommended: 1600×900px, PNG/JPG (max 2MB)
-                      </p>
+                <Field data-invalid={!!errors.thumbnail}>
+                  <FieldLabel>Course Thumbnail</FieldLabel>
+                  <input
+                    ref={inputRef}
+                    type='file'
+                    accept='image/png, image/jpeg, image/webp'
+                    onChange={onChangeUpload}
+                    className='hidden'
+                  />
+                  {thumbnail ? (
+                    <div className='relative h-48 w-full overflow-hidden rounded-xl border'>
+                      <Image
+                        src={
+                          isValidImageName(thumbnail)
+                            ? thumbnail
+                            : "/image/fallback_course.png"
+                        }
+                        alt='thumbnail'
+                        fill
+                        className='object-cover'
+                      />
+                      <Button
+                        type='button'
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setValue("thumbnail", "", { shouldValidate: true });
+                        }}
+                        className='absolute top-2 right-2 z-10 aspect-square cursor-pointer rounded-full bg-black/60 p-1 text-white hover:bg-black'
+                      >
+                        <X />
+                      </Button>
                     </div>
-                  </div>
-                </div>
+                  ) : (
+                    <div
+                      className='group bg-background hover:bg-border relative flex h-48 cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed p-8 transition-colors'
+                      onClick={onClickUpload}
+                    >
+                      {isUploadingImage ? (
+                        <div>loading...</div>
+                      ) : (
+                        <>
+                          <div className='bg-border group-hover:bg-background mb-2 rounded-full p-2'>
+                            <UploadCloud className='h-5 w-5 text-slate-600' />
+                          </div>
+                          <p className='text-xs font-medium text-slate-600'>
+                            Choose Image
+                          </p>
+                          <p className='mt-2 text-center text-[10px] text-slate-400'>
+                            {"Recommended: 1600×900px, PNG/JPG (max 2MB)"}
+                          </p>
+                        </>
+                      )}
+                    </div>
+                  )}
+                  {errors.thumbnail && (
+                    <FieldError errors={[errors.thumbnail]} />
+                  )}
+                </Field>
               </div>
 
               <div className='grid grid-cols-2 gap-4'>

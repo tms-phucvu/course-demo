@@ -33,7 +33,7 @@ import { Course } from "@/features/course-management/types/course.types";
 import {
   formatDateFromISO,
   getPageNumbers,
-  isValidImage,
+  isValidImageName,
 } from "@/features/course-management/utils/course-management.utils";
 import { formatDuration } from "@/features/course/utils/course.utils";
 import { Link } from "@/i18n";
@@ -221,9 +221,9 @@ export function CourseManagement() {
                         <div className='bg-muted relative h-12 w-16 overflow-hidden rounded-md'>
                           <Image
                             src={
-                              isValidImage(course.thumbnail)
+                              isValidImageName(course.thumbnail)
                                 ? course.thumbnail
-                                : "/image/fallback_course.webp"
+                                : "/image/fallback_course.png"
                             }
                             alt={course.title}
                             fill

@@ -12,7 +12,6 @@ export const transformCoursePayload = (
   return {
     ...data,
     slug: slugify(data.title),
-    thumbnail: "/image/fallback_course.webp",
     price: 100000,
     isPublished: true,
 
@@ -38,6 +37,7 @@ export const transformCourseToForm = (
   return {
     title: course.title,
     description: course.description,
+    thumbnail: course.thumbnail,
     language: course.language,
     level: course.level,
     tags: course.tags.join(", "),

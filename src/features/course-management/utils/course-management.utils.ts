@@ -49,8 +49,13 @@ export const getPageNumbers = ({
   return pages;
 };
 
-export const isValidImage = (url: string) => {
+export const isValidImageName = (url: string) => {
   return /\.(jpg|jpeg|png|webp)$/i.test(url);
+};
+
+export const isValidImage = (file: File) => {
+  const allowedTypes = ["image/png", "image/jpeg", "image/webp"];
+  return allowedTypes.includes(file.type);
 };
 
 export const slugify = (title: string): string => {
