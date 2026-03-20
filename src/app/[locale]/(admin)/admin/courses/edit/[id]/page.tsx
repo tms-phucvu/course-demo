@@ -1,7 +1,4 @@
-import { notFound } from "next/navigation";
-
 import CourseEdit from "@/features/course-management/components/course-actions/course-edit";
-import { getCourseById } from "@/features/course/mock/course-data";
 
 interface PageProps {
   params: Promise<{
@@ -12,12 +9,6 @@ interface PageProps {
 
 export default async function CourseEditPage({ params }: PageProps) {
   const { id } = await params;
-
-  const course = getCourseById(id);
-
-  if (!course) {
-    notFound();
-  }
 
   return <CourseEdit id={id} />;
 }

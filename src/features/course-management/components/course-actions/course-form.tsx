@@ -19,11 +19,12 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { SortableSectionCard } from "@/features/course-management/components/section-field/sortable-section-card";
 import { useCreateCourse } from "@/features/course-management/hooks/use-create-course";
+import { useUpdateCourse } from "@/features/course-management/hooks/use-update-course";
 import {
   CourseFormValues,
   courseSchema,
 } from "@/features/course-management/schemas/course.schemas";
-import { transformCreateCoursePayload } from "@/features/course-management/utils/transform-course.utils";
+import { transformCoursePayload } from "@/features/course-management/utils/transform-course.utils";
 import { Link, useRouter } from "@/i18n";
 import {
   DndContext,
@@ -40,9 +41,15 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Info, List, Trash2, UploadCloud } from "lucide-react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 
-function CourseForm() {
+interface CourseFormProps {
+  courseId?: string;
+  formData?: CourseFormValues;
+}
+
+function CourseForm({ courseId, formData }: CourseFormProps) {
   const router = useRouter();
-  const { mutate, isPending } = useCreateCourse();
+  const { mutate: createCourse, isPending: isCreating } = useCreateCourse();
+  const { mutate: updateCourse, isPending: isUpdating } = useUpdateCourse();
   const {
     register,
     control,
@@ -50,7 +57,7 @@ function CourseForm() {
     handleSubmit,
   } = useForm<CourseFormValues>({
     resolver: zodResolver(courseSchema),
-    defaultValues: {
+    defaultValues: formData || {
       title: "",
       description: "",
       language: "",
@@ -67,14 +74,23 @@ function CourseForm() {
   });
 
   function onSubmit(data: CourseFormValues) {
-    const dataPayload = transformCreateCoursePayload(data);
-
-    mutate(dataPayload, {
-      onSuccess: () => {
-        router.push(`/courses`);
-      },
-    });
-    console.log("data", dataPayload);
+    const dataPayload = transformCoursePayload(data);
+    if (!courseId) {
+      createCourse(dataPayload, {
+        onSuccess: () => {
+          router.push(`/courses`);
+        },
+      });
+    } else {
+      updateCourse(
+        { id: courseId, data: dataPayload },
+        {
+          onSuccess: () => {
+            router.push(`/courses`);
+          },
+        }
+      );
+    }
   }
 
   const {
@@ -126,7 +142,9 @@ function CourseForm() {
 
   return (
     <div className='flex flex-col gap-6 sm:px-16'>
-      <h1 className='text-4xl font-bold'>Create course</h1>
+      <h1 className='text-4xl font-bold'>
+        {!courseId ? "Create course" : "Edit course"}
+      </h1>
       <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-10'>
         {/* Basic Information of Course */}
         <div className='flex flex-col gap-4'>
@@ -347,12 +365,18 @@ function CourseForm() {
         </div>
         {/* Action for Course Form */}
         <div className='flex justify-end gap-4'>
-          <Link href={"./"}>
+          <Link href={"/admin/courses"}>
             <Button variant={"outline"}>Cancel</Button>
           </Link>
-          <Button type='submit' disabled={isSubmitting || isPending}>
-            {isPending ? "Publishing..." : "Publish Course"}
-          </Button>
+          {!courseId ? (
+            <Button type='submit' disabled={isSubmitting || isCreating}>
+              {isCreating ? "Publishing..." : "Publish Course"}
+            </Button>
+          ) : (
+            <Button type='submit' disabled={isSubmitting || isUpdating}>
+              {isUpdating ? "Updating..." : "Update Course"}
+            </Button>
+          )}
         </div>
       </form>
     </div>

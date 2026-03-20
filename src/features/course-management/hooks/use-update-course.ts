@@ -4,6 +4,7 @@ import {
   UpdateCoursePayload,
 } from "@/features/course-management/types/course.types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 export const useUpdateCourse = () => {
   const queryClient = useQueryClient();
@@ -22,6 +23,11 @@ export const useUpdateCourse = () => {
       queryClient.invalidateQueries({
         queryKey: ["course", variables.id],
       });
+
+      toast.success("Course updated successfully");
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to update course");
     },
   });
 };

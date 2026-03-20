@@ -2,12 +2,13 @@ import { CourseFormValues } from "@/features/course-management/schemas/course.sc
 import {
   CourseDetails,
   CreateCoursePayload,
+  UpdateCoursePayload,
 } from "@/features/course-management/types/course.types";
 import { slugify } from "@/features/course-management/utils/course-management.utils";
 
-export const transformCreateCoursePayload = (
+export const transformCoursePayload = (
   data: CourseFormValues
-): CreateCoursePayload => {
+): CreateCoursePayload | UpdateCoursePayload => {
   return {
     ...data,
     slug: slugify(data.title),
@@ -50,8 +51,10 @@ export const transformCourseToForm = (
     })),
 
     sections: course.sections.map((section) => ({
+      id: section.id,
       title: section.title,
       lessons: section.lessons.map((lesson) => ({
+        id: lesson.id,
         title: lesson.title,
         duration: lesson.duration,
         videoId: lesson.videoUrl,

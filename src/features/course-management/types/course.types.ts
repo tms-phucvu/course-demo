@@ -85,8 +85,15 @@ export type CreateCoursePayload = Omit<
 };
 
 // UPDATE
-export type UpdateLessonPayload = CreateLessonPayload;
+export type UpdateLessonPayload = CreateLessonPayload & {
+  id: string;
+};
 
-export type UpdateSectionPayload = CreateSectionPayload;
+export type UpdateSectionPayload = Omit<CreateSectionPayload, "lessons"> & {
+  id: string;
+  lessons: UpdateLessonPayload[];
+};
 
-export type UpdateCoursePayload = CreateCoursePayload;
+export type UpdateCoursePayload = Omit<CreateCoursePayload, "sections"> & {
+  sections: CreateSectionPayload[];
+};
