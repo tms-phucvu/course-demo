@@ -18,11 +18,13 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { SortableSectionCard } from "@/features/course-management/components/section-field/sortable-section-card";
+import { useCreateCourse } from "@/features/course-management/hooks/use-create-course";
 import {
   CourseFormValues,
   courseSchema,
 } from "@/features/course-management/schemas/course.schemas";
-import { Link } from "@/i18n";
+import { transformCreateCoursePayload } from "@/features/course-management/utils/transform-course.utils";
+import { Link, useRouter } from "@/i18n";
 import {
   DndContext,
   DragEndEvent,
@@ -39,6 +41,8 @@ import { Info, List, Trash2, UploadCloud } from "lucide-react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 
 function CourseForm() {
+  const router = useRouter();
+  const { mutate, isPending } = useCreateCourse();
   const {
     register,
     control,
@@ -49,8 +53,7 @@ function CourseForm() {
     defaultValues: {
       title: "",
       description: "",
-      author: "",
-      level: "",
+      language: "",
       tags: "",
       requirements: [{ value: "" }],
       learningOutcomes: [{ value: "" }],
@@ -64,19 +67,14 @@ function CourseForm() {
   });
 
   function onSubmit(data: CourseFormValues) {
-    const dataWithOrder = {
-      ...data,
-      sections: data.sections.map((section, sectionIndex) => ({
-        ...section,
-        order: sectionIndex,
-        lessons: section.lessons.map((lesson, lessonIndex) => ({
-          ...lesson,
-          order: lessonIndex,
-        })),
-      })),
-    };
+    const dataPayload = transformCreateCoursePayload(data);
 
-    console.log("data", dataWithOrder);
+    mutate(dataPayload, {
+      onSuccess: () => {
+        router.push(`/courses`);
+      },
+    });
+    console.log("data", dataPayload);
   }
 
   const {
@@ -184,14 +182,14 @@ function CourseForm() {
               </div>
 
               <div className='grid grid-cols-2 gap-4'>
-                {/* Author */}
-                <Field data-invalid={!!errors.author}>
-                  <FieldLabel>Author</FieldLabel>
+                {/* Language */}
+                <Field data-invalid={!!errors.language}>
+                  <FieldLabel>Language</FieldLabel>
                   <Input
-                    {...register("author")}
-                    placeholder='Enter author...'
+                    {...register("language")}
+                    placeholder='Enter language...'
                   />
-                  {errors.author && <FieldError errors={[errors.author]} />}
+                  {errors.language && <FieldError errors={[errors.language]} />}
                 </Field>
 
                 {/* Level (Select → Controller) */}
@@ -352,8 +350,8 @@ function CourseForm() {
           <Link href={"./"}>
             <Button variant={"outline"}>Cancel</Button>
           </Link>
-          <Button type='submit' disabled={isSubmitting}>
-            Publish Course
+          <Button type='submit' disabled={isSubmitting || isPending}>
+            {isPending ? "Publishing..." : "Publish Course"}
           </Button>
         </div>
       </form>

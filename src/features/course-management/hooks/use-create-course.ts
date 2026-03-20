@@ -4,6 +4,7 @@ import {
   CreateCoursePayload,
 } from "@/features/course-management/types/course.types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 export const useCreateCourse = () => {
   const queryClient = useQueryClient();
@@ -12,6 +13,10 @@ export const useCreateCourse = () => {
     mutationFn: (data) => createCourse(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["courses"] });
+      toast.success("Course created successfully");
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to create course");
     },
   });
 };

@@ -1,5 +1,5 @@
 // BASE TYPE
-export type CourseLevel = "Beginner" | "Intermediate" | "Advanced";
+export type CourseLevel = "beginner" | "intermediate" | "advanced";
 
 export interface Lesson {
   id: string;
