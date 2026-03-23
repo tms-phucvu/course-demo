@@ -19,3 +19,47 @@ export function formatVideoDuration(seconds: number) {
 
   return `${pad(m)}:${pad(s)}`;
 }
+
+// Helper function to generate page numbers
+export function getPageNumbers({
+  currentPage,
+  totalPages,
+}: {
+  currentPage: number;
+  totalPages: number;
+}) {
+  const pages: (number | "ellipsis")[] = [];
+
+  if (totalPages <= 7) {
+    for (let i = 1; i <= totalPages; i++) pages.push(i);
+    return pages;
+  }
+
+  // Always show first page
+  pages.push(1);
+
+  // Ellipsis before middle range
+  if (currentPage > 4) {
+    pages.push("ellipsis");
+  }
+
+  // Middle range
+  const start = Math.max(2, currentPage - 2);
+  const end = Math.min(totalPages - 1, currentPage + 2);
+
+  for (let i = start; i <= end; i++) {
+    pages.push(i);
+  }
+
+  // Ellipsis after middle range
+  if (currentPage < totalPages - 3) {
+    pages.push("ellipsis");
+  }
+
+  // Always show last page
+  if (totalPages > 1) {
+    pages.push(totalPages);
+  }
+
+  return pages;
+}

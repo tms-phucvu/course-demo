@@ -76,7 +76,7 @@ export default function CourseDetail({ courseId }: CourseDetailProps) {
         </ol>
       </Breadcrumb>
 
-      <div className='mt-4 w-full sm:mt-6 lg:grid lg:grid-cols-[2fr_1fr] lg:items-start lg:gap-8'>
+      <div className='mt-4 w-full *:min-w-0 sm:mt-6 lg:grid lg:grid-cols-[2fr_1fr] lg:items-start lg:gap-8'>
         <div className='space-y-6'>
           <div className='space-y-2'>
             <h1 className='text-3xl font-semibold tracking-tight sm:text-4xl'>
