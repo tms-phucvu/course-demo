@@ -1,13 +1,13 @@
 import Link from "next/link";
 
+import { CourseResponse } from "@/features/course-management/types/course.types";
 import { MetaItem } from "@/features/course/components/course/meta-item";
-import { Course } from "@/features/course/types/course.types";
 import { formatDuration } from "@/features/course/utils/course.utils";
 import { CirclePlay, Clock, Library } from "lucide-react";
 import Image from "next/image";
 
 interface CourseCardProps {
-  course: Course;
+  course: CourseResponse;
 }
 
 function CourseCard({ course }: CourseCardProps) {
@@ -29,7 +29,7 @@ function CourseCard({ course }: CourseCardProps) {
         <h3 className='line-clamp-2 leading-tight font-medium'>
           {course.title}
         </h3>
-        <p className='text-muted-foreground mt-1 text-sm'>{course.author}</p>
+        <p className='text-muted-foreground mt-1 text-sm'>{course.language}</p>
       </div>
       <div className='border-border/50 text-muted-foreground flex items-center justify-between border-t px-4 py-3 text-sm'>
         <MetaItem icon={Library} value={course.totalSections} />

@@ -1,44 +1,133 @@
+"use client";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Course, Lesson } from "@/features/course/types/course.types";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
+import { useCourseDetail } from "@/features/course/hooks/use-course-detail"; // adjust path if needed
+import { Link } from "@/i18n";
+
 interface LessonMainProps {
-  lesson: Lesson;
-  course: Course;
+  selectedLessonId: string;
+  courseId: string;
 }
 
-function LessonMain({ lesson, course }: LessonMainProps) {
+function LessonMain({ selectedLessonId, courseId }: LessonMainProps) {
+  const { data: course, isLoading, isError, error } = useCourseDetail(courseId);
+
+  if (isLoading) {
+    return (
+      <div className='w-full p-6 text-center text-gray-500'>
+        Loading lesson...
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className='text-destructive w-full p-6 text-center'>
+        Failed to load course: {error?.message || "Unknown error"}
+      </div>
+    );
+  }
+
+  if (!course) {
+    return (
+      <div className='w-full p-6 text-center text-gray-500'>
+        Course not found
+      </div>
+    );
+  }
+
+  // Find the selected lesson across all sections
+  // Find the selected lesson + its position
+  let selectedLesson = null;
+  let prevLessonId: string | null = null;
+  let nextLessonId: string | null = null;
+
+  outer: for (let secIdx = 0; secIdx < course.sections.length; secIdx++) {
+    const section = course.sections[secIdx];
+    for (let lesIdx = 0; lesIdx < section.lessons.length; lesIdx++) {
+      const lesson = section.lessons[lesIdx];
+
+      if (lesson.id === selectedLessonId) {
+        selectedLesson = lesson;
+
+        // Previous lesson
+        if (lesIdx > 0) {
+          prevLessonId = section.lessons[lesIdx - 1].id;
+        } else if (secIdx > 0) {
+          const prevSection = course.sections[secIdx - 1];
+          prevLessonId =
+            prevSection.lessons[prevSection.lessons.length - 1]?.id || null;
+        }
+
+        // Next lesson
+        if (lesIdx < section.lessons.length - 1) {
+          nextLessonId = section.lessons[lesIdx + 1].id;
+        } else if (secIdx < course.sections.length - 1) {
+          const nextSection = course.sections[secIdx + 1];
+          nextLessonId = nextSection.lessons[0]?.id || null;
+        }
+
+        break outer;
+      }
+    }
+  }
+
+  if (!selectedLesson) {
+    return (
+      <div className='w-full p-6 text-center text-gray-500'>
+        Lesson not found in this course
+      </div>
+    );
+  }
+
+  const prevHref = prevLessonId
+    ? `/courses/${courseId}/lessons/${prevLessonId}`
+    : "#";
+  const nextHref = nextLessonId
+    ? `/courses/${courseId}/lessons/${nextLessonId}`
+    : "#";
+
   return (
     <div className='w-full'>
       <div>
         <div className='w-full'>
           <iframe
             className='aspect-video max-h-[min(80vh,800px)] w-full'
-            src={`https://www.youtube.com/embed/${lesson.videoId}?rel=0`}
-            title={lesson.title}
+            src={`https://www.youtube.com/embed/${selectedLesson.videoUrl}?rel=0`}
+            title={selectedLesson.title}
             allowFullScreen
           />
         </div>
+
         <div className='flex flex-col items-center gap-4 rounded-b-xl border p-6 sm:flex-row'>
-          <div className='flex-1'>{`Lesson '${lesson.title}' of course: ${course.title}`}</div>
+          <div className='flex-1'>{`Lesson '${selectedLesson.title}' of course: ${course.title}`}</div>
           <div className='flex gap-4 self-end'>
-            <Button variant={"outline"}>
-              <ChevronLeft />
-              Prev Lesson
-            </Button>
-            <Button>
-              Next Lesson
-              <ChevronRight />
-            </Button>
+            <Link href={prevHref}>
+              <Button variant='outline' disabled={!prevLessonId}>
+                <ChevronLeft className='mr-2 h-4 w-4' />
+                Prev Lesson
+              </Button>
+            </Link>
+            <Link href={nextHref}>
+              <Button disabled={!nextLessonId}>
+                Next Lesson
+                <ChevronRight className='ml-2 h-4 w-4' />
+              </Button>
+            </Link>
           </div>
         </div>
+
         <Tabs defaultValue='overview' className='mt-6'>
           <TabsList>
             <TabsTrigger value='overview'>Overview</TabsTrigger>
             <TabsTrigger value='resources'>Resources</TabsTrigger>
-            <TabsTrigger value='notion'>Notion</TabsTrigger>
+            <TabsTrigger value='notion'>Reviews</TabsTrigger>
           </TabsList>
+
+          {/* Add Tab content panels here later */}
+          {/* <TabsContent value="overview">...</TabsContent> */}
         </Tabs>
       </div>
     </div>

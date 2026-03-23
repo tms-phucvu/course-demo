@@ -10,7 +10,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { cn } from "@/core/lib";
-import { Course } from "@/features/course/types/course.types";
+import { CourseDetails } from "@/features/course-management/types/course.types";
 import { formatDuration } from "@/features/course/utils/course.utils";
 import { Link } from "@/i18n";
 import { useIsMobile } from "@/shared/hooks/use-mobile";
@@ -19,7 +19,7 @@ import { useParams } from "next/navigation";
 import { Dispatch, SetStateAction } from "react";
 
 interface LessonSidebarProps {
-  course: Course;
+  course: CourseDetails;
   isOpen: boolean;
   setIsOpenSidebar: Dispatch<SetStateAction<boolean>>;
 }

@@ -14,7 +14,7 @@ export interface Section {
   title: string;
   order: number;
   totalLessons: number;
-  totalDurationSeconds: number;
+  totalDuration: number;
   lessons: Lesson[];
 }
 
@@ -36,8 +36,7 @@ export interface Course {
   durationMinutes: number;
   totalSections: number;
   totalLessons: number;
-  totalDurationSeconds: number;
-  totalDuration?: number;
+  totalDuration: number;
   sections: Section[];
 }
 
@@ -65,7 +64,7 @@ export type CreateLessonPayload = Omit<Lesson, "id">;
 
 export type CreateSectionPayload = Omit<
   Section,
-  "id" | "totalLessons" | "totalDurationSeconds" | "lessons"
+  "id" | "totalLessons" | "totalDuration" | "lessons"
 > & {
   lessons: CreateLessonPayload[];
 };
@@ -78,7 +77,7 @@ export type CreateCoursePayload = Omit<
   | "durationMinutes"
   | "totalSections"
   | "totalLessons"
-  | "totalDurationSeconds"
+  | "totalDuration"
   | "sections"
 > & {
   sections: CreateSectionPayload[];

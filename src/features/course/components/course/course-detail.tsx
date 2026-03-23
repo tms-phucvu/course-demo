@@ -1,3 +1,4 @@
+"use client";
 import { BookOpen, Check, Play } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -17,20 +18,56 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
-import { Course } from "@/features/course/types/course.types";
 import { formatDuration } from "@/features/course/utils/course.utils";
 
+import { CourseDetails } from "@/features/course-management/types/course.types";
+import { useCourseDetail } from "@/features/course/hooks/use-course-detail"; // adjust path if needed
+
 interface CourseDetailProps {
-  course: Course;
+  courseId: string;
 }
 
-export default function CourseDetail({ course }: CourseDetailProps) {
+export default function CourseDetail({ courseId }: CourseDetailProps) {
+  const { data, isLoading, isError, error } = useCourseDetail(courseId);
+
+  if (isLoading) {
+    return (
+      <div className='mx-auto max-w-7xl px-4 pt-8 pb-10 sm:px-6 lg:px-8'>
+        <div className='text-center text-gray-500'>
+          Loading course details...
+        </div>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className='mx-auto max-w-7xl px-4 pt-8 pb-10 sm:px-6 lg:px-8'>
+        <div className='text-destructive text-center'>
+          Failed to load course: {error?.message || "Unknown error"}
+        </div>
+      </div>
+    );
+  }
+
+  if (!data) {
+    return (
+      <div className='mx-auto max-w-7xl px-4 pt-8 pb-10 sm:px-6 lg:px-8'>
+        <div className='text-center text-gray-500'>Course not found</div>
+      </div>
+    );
+  }
+
+  const course: CourseDetails = data; // now safely typed as CourseDetails
+
   return (
-    <div className='mx-auto max-w-7xl px-4 pt-8 pb-10 sm:px-6 lg:px-8'>
+    <div className='mx-auto w-full max-w-7xl px-4 pt-8 pb-10 sm:px-6 lg:px-8'>
       <Breadcrumb>
         <ol className='text-muted-foreground flex flex-wrap items-center gap-1.5 text-sm sm:gap-2.5'>
           <BreadcrumbItem>
-            <BreadcrumbLink href='/courses'>Courses</BreadcrumbLink>
+            <BreadcrumbLink asChild>
+              <Link href='/courses'>Courses</Link>
+            </BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
@@ -39,7 +76,7 @@ export default function CourseDetail({ course }: CourseDetailProps) {
         </ol>
       </Breadcrumb>
 
-      <div className='mt-4 sm:mt-6 lg:grid lg:grid-cols-[2fr_1fr] lg:items-start lg:gap-8'>
+      <div className='mt-4 w-full sm:mt-6 lg:grid lg:grid-cols-[2fr_1fr] lg:items-start lg:gap-8'>
         <div className='space-y-6'>
           <div className='space-y-2'>
             <h1 className='text-3xl font-semibold tracking-tight sm:text-4xl'>
@@ -47,9 +84,9 @@ export default function CourseDetail({ course }: CourseDetailProps) {
             </h1>
             <p className='text-muted-foreground'>{course.description}</p>
             <div className='text-muted-foreground text-sm'>
-              Created by{" "}
+              Language course is{" "}
               <span className='text-foreground font-medium'>
-                {course.author}
+                {course.language}
               </span>
               <span>{" for "}</span>
               <Badge variant='default' className='uppercase'>
@@ -185,7 +222,7 @@ export default function CourseDetail({ course }: CourseDetailProps) {
               <div className='p-5'>
                 <Button asChild className='w-full' size='lg' variant='default'>
                   <Link
-                    href={`./${course.id}/lessons/${course.sections[0].lessons[0].id}`}
+                    href={`./${course.id}/lessons/${course.sections[0]?.lessons[0]?.id}`}
                   >
                     Start Learning Now
                   </Link>
