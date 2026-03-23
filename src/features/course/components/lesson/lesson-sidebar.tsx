@@ -1,20 +1,15 @@
 "use client";
 
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import { Checkbox } from "@/components/ui/checkbox";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/core/lib";
 import { CourseDetails } from "@/features/course-management/types/course.types";
-import { formatDuration } from "@/features/course/utils/course.utils";
-import { Link } from "@/i18n";
+import AssistantTab from "@/features/course/components/sidebar-tab/assistant-tab";
+import ContentTab from "@/features/course/components/sidebar-tab/content-tab";
+import NoteTab from "@/features/course/components/sidebar-tab/note-tab";
+import { CircularProgress } from "@/features/course/components/ui/circular-progress";
 import { useIsMobile } from "@/shared/hooks/use-mobile";
-import { MonitorPlay } from "lucide-react";
 import { useParams } from "next/navigation";
 import { Dispatch, SetStateAction } from "react";
 
@@ -38,67 +33,51 @@ function LessonSidebar({
   )?.id;
 
   const sidebarContent = (
-    <>
-      <div className='flex items-center justify-between border-b p-4'>
-        <div>
-          <h3 className='font-semibold'>Course Content</h3>
-          <p className='text-xs'>{`0/${course.totalLessons} completed`}</p>
+    <Tabs defaultValue='content' className='flex h-full flex-col'>
+      <div>
+        <div className='flex items-center justify-between p-4'>
+          <div>
+            <h3 className='font-semibold'>Course Content</h3>
+            <p className='text-xs'>{`0/${course.totalLessons} completed`}</p>
+          </div>
+          <div className='mr-2 flex items-center gap-2'>
+            <CircularProgress value={55} />
+          </div>
         </div>
-        <div className='mr-2'>0%</div>
+        <TabsList className='inline-flex h-auto w-full justify-start rounded-none border-b bg-transparent p-0'>
+          <TabsTrigger
+            value='content'
+            className='text-muted-foreground hover:text-foreground data-[state=active]:border-b-primary data-[state=active]:text-foreground relative rounded-none border-b-2 border-b-transparent bg-transparent px-5 py-3 text-sm font-medium shadow-none transition-none data-[state=active]:bg-transparent data-[state=active]:shadow-none'
+          >
+            Content
+          </TabsTrigger>
+          <TabsTrigger
+            value='note'
+            className='text-muted-foreground hover:text-foreground data-[state=active]:border-b-primary data-[state=active]:text-foreground relative rounded-none border-b-2 border-b-transparent bg-transparent px-5 py-3 text-sm font-medium shadow-none transition-none data-[state=active]:bg-transparent data-[state=active]:shadow-none'
+          >
+            Note
+          </TabsTrigger>
+          <TabsTrigger
+            value='assistant'
+            className='text-muted-foreground hover:text-foreground data-[state=active]:border-b-primary data-[state=active]:text-foreground relative rounded-none border-b-2 border-b-transparent bg-transparent px-5 py-3 text-sm font-medium shadow-none transition-none data-[state=active]:bg-transparent data-[state=active]:shadow-none'
+          >
+            AI Assistant
+          </TabsTrigger>
+        </TabsList>
       </div>
 
       <ScrollArea className='flex-1'>
-        <div className='mr-2'>
-          <Accordion
-            type='multiple'
-            className='max-w-lg'
-            defaultValue={openedSectionId ? [openedSectionId] : []}
-          >
-            {course.sections.map((section) => (
-              <AccordionItem key={section.id} value={section.id}>
-                <AccordionTrigger className='bg-muted group px-4 hover:no-underline'>
-                  <div className='flex flex-col'>
-                    <div className='text-lg group-hover:underline'>
-                      {`Section ${section.order}. ${section.title}`}
-                    </div>
-                    <div className='ml-0.5 space-x-2 text-xs font-normal'>
-                      <span>{`${section.totalLessons} lessons`}</span>
-                      <span>•</span>
-                      <span>{formatDuration(section.totalDuration)}</span>
-                    </div>
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className='p-0'>
-                  <div className='flex flex-col'>
-                    {section.lessons.map((lesson) => (
-                      <Link
-                        key={lesson.id}
-                        href={`./${lesson.id}`}
-                        className={cn(
-                          "hover:bg-muted px-8 py-2",
-                          lessonId === lesson.id && "bg-muted"
-                        )}
-                      >
-                        <div className='flex items-center justify-between'>
-                          <div className='flex flex-col gap-1.5'>
-                            <div>{`${lesson.order}. ${lesson.title}`}</div>
-                            <div className='flex items-center gap-1.5 text-xs font-light'>
-                              <MonitorPlay size={16} />
-                              {formatDuration(lesson.duration)}
-                            </div>
-                          </div>
-                          <Checkbox />
-                        </div>
-                      </Link>
-                    ))}
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
-        </div>
+        <TabsContent value='content' className='mr-2'>
+          <ContentTab course={course} openedSectionId={openedSectionId} />
+        </TabsContent>
+        <TabsContent value='note'>
+          <NoteTab />
+        </TabsContent>
+        <TabsContent value='assistant'>
+          <AssistantTab />
+        </TabsContent>
       </ScrollArea>
-    </>
+    </Tabs>
   );
 
   return (

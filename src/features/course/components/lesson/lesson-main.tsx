@@ -1,8 +1,11 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
+import OverviewTab from "@/features/course/components/lesson-main-tab/overview-tab";
+import ResourcesTab from "@/features/course/components/lesson-main-tab/resources-tab";
+import ReviewsTab from "@/features/course/components/lesson-main-tab/reviews-tab";
 import { useCourseDetail } from "@/features/course/hooks/use-course-detail"; // adjust path if needed
 import { Link } from "@/i18n";
 
@@ -102,7 +105,9 @@ function LessonMain({ selectedLessonId, courseId }: LessonMainProps) {
         </div>
 
         <div className='flex flex-col items-center gap-4 rounded-b-xl border p-6 sm:flex-row'>
-          <div className='flex-1'>{`Lesson '${selectedLesson.title}' of course: ${course.title}`}</div>
+          <div className='flex-1 text-lg font-semibold'>
+            {selectedLesson.title}
+          </div>
           <div className='flex gap-4 self-end'>
             <Link href={prevHref}>
               <Button variant='outline' disabled={!prevLessonId}>
@@ -123,11 +128,20 @@ function LessonMain({ selectedLessonId, courseId }: LessonMainProps) {
           <TabsList>
             <TabsTrigger value='overview'>Overview</TabsTrigger>
             <TabsTrigger value='resources'>Resources</TabsTrigger>
-            <TabsTrigger value='notion'>Reviews</TabsTrigger>
+            <TabsTrigger value='reviews'>Reviews</TabsTrigger>
           </TabsList>
 
-          {/* Add Tab content panels here later */}
-          {/* <TabsContent value="overview">...</TabsContent> */}
+          <div className='mt-6 mr-2 mb-16 border-t py-4 sm:mb-32 sm:px-80'>
+            <TabsContent value='overview'>
+              <OverviewTab course={course} />
+            </TabsContent>
+            <TabsContent value='resources'>
+              <ResourcesTab />
+            </TabsContent>
+            <TabsContent value='reviews'>
+              <ReviewsTab />
+            </TabsContent>
+          </div>
         </Tabs>
       </div>
     </div>

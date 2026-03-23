@@ -11,7 +11,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { UserButton } from "@/features/auth";
-import { usePathname } from "@/i18n";
+import { Link, usePathname } from "@/i18n";
 import { LocaleSwitcher } from "@/shared";
 
 const PATH_TITLE_MAP: Record<string, string> = {
@@ -39,7 +39,9 @@ function AdminHeader() {
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem className='hidden md:block'>
-              <BreadcrumbLink href='/admin'>Management</BreadcrumbLink>
+              <BreadcrumbLink asChild>
+                <Link href='/admin'>Management</Link>
+              </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator className='hidden md:block' />
             <BreadcrumbItem>
