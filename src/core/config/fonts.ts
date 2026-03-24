@@ -1,4 +1,4 @@
-import { Outfit } from "next/font/google";
+import { Be_Vietnam_Pro } from "next/font/google";
 
 /**
  * Primary font configuration
@@ -13,7 +13,7 @@ import { Outfit } from "next/font/google";
  * 1. Add the font link in src/app/[locale]/layout.tsx <head>
  * 2. Set fontFamily directly in CSS/Tailwind
  */
-export const primaryFont = Outfit({
+export const primaryFont = Be_Vietnam_Pro({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
   variable: "--font-primary",
