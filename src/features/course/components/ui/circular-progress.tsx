@@ -33,7 +33,7 @@ export function CircularProgress({
           cy={size / 2}
           r={radius}
           strokeWidth={strokeWidth}
-          className='stroke-muted fill-white'
+          className='stroke-muted fill-transparent'
         />
 
         {/* progress */}

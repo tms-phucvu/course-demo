@@ -18,7 +18,7 @@ import { useState } from "react";
 import { Control, useFieldArray } from "react-hook-form";
 
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { LessonDialogContent } from "@/features/course-management/components/section-field/lesson-dialog-content";
+import { LessonDialogContent } from "@/features/course-management/components/dialog/lesson-dialog-content";
 import { SortableLessonItem } from "@/features/course-management/components/section-field/sortable-lesson-item";
 import { LessonFormValues } from "@/features/course-management/schemas/lesson.schemas";
 

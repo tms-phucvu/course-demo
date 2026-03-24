@@ -3,10 +3,11 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
+import { Separator } from "@/components/ui/separator";
 import OverviewTab from "@/features/course/components/lesson-main-tab/overview-tab";
 import ResourcesTab from "@/features/course/components/lesson-main-tab/resources-tab";
 import ReviewsTab from "@/features/course/components/lesson-main-tab/reviews-tab";
-import { useCourseDetail } from "@/features/course/hooks/use-course-detail"; // adjust path if needed
+import { useCourseDetail } from "@/features/course/hooks/use-course-detail";
 import { Link } from "@/i18n";
 
 interface LessonMainProps {
@@ -124,14 +125,17 @@ function LessonMain({ selectedLessonId, courseId }: LessonMainProps) {
           </div>
         </div>
 
-        <Tabs defaultValue='overview' className='mt-6'>
-          <TabsList>
+        <Tabs
+          defaultValue='overview'
+          className='mt-6 flex flex-col items-center gap-5'
+        >
+          <TabsList className='self-start'>
             <TabsTrigger value='overview'>Overview</TabsTrigger>
             <TabsTrigger value='resources'>Resources</TabsTrigger>
             <TabsTrigger value='reviews'>Reviews</TabsTrigger>
           </TabsList>
-
-          <div className='mt-6 mr-2 mb-16 border-t py-4 sm:mb-32 sm:px-80'>
+          <Separator className='mx-6' />
+          <div className='mr-2 mb-16 flex w-full justify-center sm:w-1/2'>
             <TabsContent value='overview'>
               <OverviewTab course={course} />
             </TabsContent>
