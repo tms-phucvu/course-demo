@@ -41,7 +41,7 @@ function LessonSidebar({
             <p className='text-xs'>{`0/${course.totalLessons} completed`}</p>
           </div>
           <div className='mr-2 flex items-center gap-2'>
-            <CircularProgress value={55} />
+            <CircularProgress value={0} />
           </div>
         </div>
         <TabsList className='inline-flex h-auto w-full justify-start rounded-none border-b bg-transparent p-0'>

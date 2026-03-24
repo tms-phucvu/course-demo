@@ -1,6 +1,7 @@
 "use client";
 
 import { Toaster } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/core/components/auth-provider";
 import { queryClient } from "@/core/lib/react-query";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -21,7 +22,9 @@ export function Providers({ children }: ProvidersProps) {
           enableSystem
           disableTransitionOnChange
         >
-          <AuthProvider>{children}</AuthProvider>
+          <AuthProvider>
+            <TooltipProvider>{children}</TooltipProvider>
+          </AuthProvider>
           <Toaster richColors position='top-right' />
         </ThemeProvider>
       </SessionProvider>

@@ -7,6 +7,11 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { cn } from "@/core/lib";
 import { CourseDetails } from "@/features/course-management/types/course.types";
 import { formatDuration } from "@/features/course/utils/course.utils";
@@ -66,7 +71,12 @@ export default function ContentTab({
                           {formatDuration(lesson.duration)}
                         </div>
                       </div>
-                      <Checkbox />
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Checkbox disabled={true} />
+                        </TooltipTrigger>
+                        <TooltipContent>Coming soon</TooltipContent>
+                      </Tooltip>
                     </div>
                   </Link>
                 ))}
