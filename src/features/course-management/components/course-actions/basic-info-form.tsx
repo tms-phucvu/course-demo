@@ -29,7 +29,7 @@ import {
   useFieldArray,
 } from "react-hook-form";
 
-import { useUploadFile } from "@/features/course-management/hooks/use-upload-file";
+import { useUploadImage } from "@/features/course-management/hooks/use-upload-image";
 import { CourseFormValues } from "@/features/course-management/schemas/course.schemas";
 import {
   isValidImage,
@@ -54,7 +54,7 @@ export function BasicInfoForm({
   watch,
 }: BasicInfoFormProps) {
   const inputRef = useRef<HTMLInputElement | null>(null);
-  const { mutate: uploadImage, isPending: isUploadingImage } = useUploadFile();
+  const { mutate: uploadImage, isPending: isUploadingImage } = useUploadImage();
 
   const {
     fields: requirementFields,
@@ -87,7 +87,11 @@ export function BasicInfoForm({
     }
     uploadImage(file, {
       onSuccess: (res) => {
+        toast.success("Image uploaded successfully");
         setValue("thumbnail", res.url, { shouldValidate: true });
+      },
+      onError: () => {
+        toast.error("Failed to upload image");
       },
     });
     e.target.value = "";

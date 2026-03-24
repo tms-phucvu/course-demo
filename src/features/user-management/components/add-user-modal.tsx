@@ -27,11 +27,12 @@ import {
 } from "@/core/image-handle";
 import { cn } from "@/core/lib/utils";
 import { Role } from "@/features/auth/types";
+import { useUploadImage } from "@/features/course-management/hooks/use-upload-image";
 import {
   AVATAR_VALIDATION,
   ROLES,
 } from "@/features/user-management/constants/user.constants";
-import { User, UserStatus } from "@/features/user-management/types/user.types";
+import { CreateUserPayload } from "@/features/user-management/types/user.types";
 import {
   AddUserFormData,
   addUserSchema,
@@ -45,7 +46,7 @@ import { useForm } from "react-hook-form";
 interface AddUserModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSuccess: (user: User) => void;
+  onSuccess: (user: CreateUserPayload) => void;
 }
 
 export function AddUserModal({
@@ -58,6 +59,8 @@ export function AddUserModal({
   const [objectUrl, setObjectUrl] = useState<string | null>(null);
   const [pendingFile, setPendingFile] = useState<File | null>(null);
   const [avatarError, setAvatarError] = useState<string | null>(null);
+  const { mutateAsync: uploadImage, isPending: isUploadingImage } =
+    useUploadImage();
 
   const form = useForm<AddUserFormData>({
     resolver: zodResolver(addUserSchema) as Resolver<AddUserFormData>,
@@ -66,6 +69,8 @@ export function AddUserModal({
       email: "",
       role: Role.ADMIN,
       avatarUrl: "",
+      password: "",
+      confirmPassword: "",
     },
   });
 
@@ -154,20 +159,37 @@ export function AddUserModal({
   );
 
   const onSubmit = useCallback(
-    (data: AddUserFormData) => {
-      const newUser: User = {
-        id: `user-${Date.now()}`,
+    async (data: AddUserFormData) => {
+      let finalAvatarUrl = data.avatarUrl || undefined;
+      if (data.avatarUrl?.startsWith("blob:")) {
+        try {
+          const response = await fetch(data.avatarUrl);
+          const blob = await response.blob();
+          const file = new File([blob], "avatar.webp", { type: "image/webp" });
+
+          const uploadResult = await uploadImage(file);
+          finalAvatarUrl = uploadResult.url;
+          URL.revokeObjectURL(data.avatarUrl);
+        } catch (error) {
+          console.error("Upload avatar failed:", error);
+          setAvatarError(
+            t("addUser.uploadFailed") || "Failed to upload image."
+          );
+          return;
+        }
+      }
+      const newUser: CreateUserPayload = {
         name: data.name,
-        avatarUrl: data.avatarUrl || undefined,
+        avatarUrl: finalAvatarUrl,
         email: data.email,
         role: data.role,
-        status: UserStatus.ACTIVE,
-        createdAt: new Date().toISOString(),
+        password: data.password,
       };
+
       onSuccess(newUser);
       handleOpenChange(false);
     },
-    [onSuccess, handleOpenChange]
+    [uploadImage, onSuccess, handleOpenChange, t]
   );
 
   const displayUrl = avatarUrl || undefined;
@@ -230,6 +252,7 @@ export function AddUserModal({
               )}
             />
 
+            {/* Name */}
             <FormField
               control={form.control}
               name='name'
@@ -247,6 +270,7 @@ export function AddUserModal({
               )}
             />
 
+            {/* Email */}
             <FormField
               control={form.control}
               name='email'
@@ -264,6 +288,7 @@ export function AddUserModal({
               )}
             />
 
+            {/* Role */}
             <FormField
               control={form.control}
               name='role'
@@ -292,6 +317,49 @@ export function AddUserModal({
               )}
             />
 
+            {/* Password */}
+            <FormField
+              control={form.control}
+              name='password'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t("addUser.password")}</FormLabel>
+                  <FormControl>
+                    <Input
+                      type='password'
+                      placeholder={
+                        t("addUser.passwordPlaceholder") || "Enter password"
+                      }
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Confirm Password */}
+            <FormField
+              control={form.control}
+              name='confirmPassword'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t("addUser.confirmPassword")}</FormLabel>
+                  <FormControl>
+                    <Input
+                      type='password'
+                      placeholder={
+                        t("addUser.confirmPasswordPlaceholder") ||
+                        "Confirm password"
+                      }
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             <DialogFooter>
               <Button
                 type='button'
@@ -300,8 +368,11 @@ export function AddUserModal({
               >
                 {t("addUser.cancel")}
               </Button>
-              <Button type='submit' disabled={form.formState.isSubmitting}>
-                {form.formState.isSubmitting
+              <Button
+                type='submit'
+                disabled={form.formState.isSubmitting || isUploadingImage}
+              >
+                {form.formState.isSubmitting || isUploadingImage
                   ? t("addUser.creating")
                   : t("addUser.create")}
               </Button>

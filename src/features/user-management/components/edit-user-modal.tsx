@@ -25,17 +25,17 @@ import {
   validateFiles,
   type CropData,
 } from "@/core/image-handle";
-import { cn } from "@/core/lib/utils";
 import { Role } from "@/features/auth/types";
+import { useUploadImage } from "@/features/course-management/hooks/use-upload-image";
+import { AVATAR_VALIDATION } from "@/features/user-management/constants/user.constants";
 import {
-  AVATAR_VALIDATION,
-  ROLES,
-} from "@/features/user-management/constants/user.constants";
-import { User } from "@/features/user-management/types/user.types";
+  UpdateUserPayload,
+  User,
+} from "@/features/user-management/types/user.types";
 import {
-  AddUserFormData,
-  addUserSchema,
-} from "@/features/user-management/validations/add-user.schema";
+  EditUserFormData,
+  editUserSchema,
+} from "@/features/user-management/validations/edit-user.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useState } from "react";
@@ -46,7 +46,13 @@ interface EditUserModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   user: User | null;
-  onSave: (user: User) => void;
+  onSave: ({
+    id,
+    updatedUser,
+  }: {
+    id: string;
+    updatedUser: UpdateUserPayload;
+  }) => void;
 }
 
 export function EditUserModal({
@@ -60,9 +66,11 @@ export function EditUserModal({
   const [objectUrl, setObjectUrl] = useState<string | null>(null);
   const [pendingFile, setPendingFile] = useState<File | null>(null);
   const [avatarError, setAvatarError] = useState<string | null>(null);
+  const { mutateAsync: uploadImage, isPending: isUploadingImage } =
+    useUploadImage();
 
-  const form = useForm<AddUserFormData>({
-    resolver: zodResolver(addUserSchema) as Resolver<AddUserFormData>,
+  const form = useForm<EditUserFormData>({
+    resolver: zodResolver(editUserSchema) as Resolver<EditUserFormData>,
     defaultValues: {
       name: "",
       email: "",
@@ -168,20 +176,37 @@ export function EditUserModal({
   );
 
   const onSubmit = useCallback(
-    (data: AddUserFormData) => {
+    async (data: EditUserFormData) => {
       if (!user) return;
-      const updatedUser: User = {
-        ...user,
+      let finalAvatarUrl = data.avatarUrl || undefined;
+      if (data.avatarUrl?.startsWith("blob:")) {
+        try {
+          const response = await fetch(data.avatarUrl);
+          const blob = await response.blob();
+          const file = new File([blob], "avatar.webp", { type: "image/webp" });
+
+          const uploadResult = await uploadImage(file);
+
+          finalAvatarUrl = uploadResult.url;
+          URL.revokeObjectURL(data.avatarUrl);
+        } catch (error) {
+          console.error("Upload avatar failed:", error);
+          setAvatarError(
+            t("addUser.uploadFailed") || "Failed to upload image."
+          );
+          return;
+        }
+      }
+      const updatedUser: UpdateUserPayload = {
         name: data.name,
-        avatarUrl: data.avatarUrl || undefined,
         email: data.email,
         role: data.role,
-        createdAt: new Date().toISOString(),
+        avatarUrl: finalAvatarUrl,
       };
-      onSave(updatedUser);
+      onSave({ id: user.id, updatedUser });
       handleOpenChange(false);
     },
-    [user, onSave, handleOpenChange]
+    [user, uploadImage, onSave, handleOpenChange, t]
   );
 
   const displayUrl = avatarUrl || undefined;
@@ -277,7 +302,7 @@ export function EditUserModal({
               )}
             />
 
-            <FormField
+            {/* <FormField
               control={form.control}
               name='role'
               render={({ field }) => (
@@ -303,7 +328,7 @@ export function EditUserModal({
                   <FormMessage />
                 </FormItem>
               )}
-            />
+            /> */}
 
             <DialogFooter>
               <Button
@@ -313,8 +338,11 @@ export function EditUserModal({
               >
                 {t("addUser.cancel")}
               </Button>
-              <Button type='submit' disabled={form.formState.isSubmitting}>
-                {form.formState.isSubmitting
+              <Button
+                type='submit'
+                disabled={form.formState.isSubmitting || isUploadingImage}
+              >
+                {form.formState.isSubmitting || isUploadingImage
                   ? t("editUserModal.saving")
                   : t("editUserModal.save")}
               </Button>

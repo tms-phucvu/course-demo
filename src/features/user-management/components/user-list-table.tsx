@@ -35,7 +35,12 @@ import {
   getInitials,
   getPageNumbers,
 } from "@/features/user-management/lib/user.util";
-import { User, UserStatus } from "@/features/user-management/types/user.types";
+import {
+  CreateUserPayload,
+  UpdateUserPayload,
+  User,
+  UserStatus,
+} from "@/features/user-management/types/user.types";
 import { Pencil, Search, Trash2, UserPlus } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -166,16 +171,11 @@ export function UserListTable() {
   ]);
 
   const handleEditSave = useCallback(
-    (updatedUser: User) => {
+    ({ id, updatedUser }: { id: string; updatedUser: UpdateUserPayload }) => {
       updateUserMutation.mutate(
         {
-          id: updatedUser.id,
-          data: {
-            name: updatedUser.name,
-            email: updatedUser.email,
-            role: updatedUser.role,
-            // status intentionally omitted because API does not support it yet
-          },
+          id,
+          data: updatedUser,
         },
         {
           onSuccess: () => {
@@ -192,24 +192,16 @@ export function UserListTable() {
   );
 
   const handleAddUserSuccess = useCallback(
-    (user: User) => {
-      createUserMutation.mutate(
-        {
-          name: user.name,
-          email: user.email,
-          role: user.role,
-          password: "StrongPassword123",
+    (user: CreateUserPayload) => {
+      createUserMutation.mutate(user, {
+        onSuccess: () => {
+          setAddUserOpen(false);
+          toast.success(t("addUser.created"));
         },
-        {
-          onSuccess: () => {
-            setAddUserOpen(false);
-            toast.success(t("addUser.created"));
-          },
-          onError: (error: Error) => {
-            toast.error(error.message || t("addUser.createFailed"));
-          },
-        }
-      );
+        onError: (error: Error) => {
+          toast.error(error.message || t("addUser.createFailed"));
+        },
+      });
     },
     [createUserMutation, t]
   );
@@ -328,6 +320,7 @@ export function UserListTable() {
                     <UserStatusSwitch
                       id={user.id}
                       isActive={user.status === UserStatus.ACTIVE}
+                      userName={user.name}
                     />
                   </TableCell>
                   <TableCell className='bg-background group-hover:bg-muted/50 sticky right-0 z-10 w-24 min-w-24 text-right shadow-[-4px_0_6px_-2px_rgba(0,0,0,0.05)]'>

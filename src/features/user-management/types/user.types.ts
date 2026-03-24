@@ -29,11 +29,8 @@ export interface UserListResponse {
   limit: number;
 }
 
-export interface CreateUserPayload {
-  name: string;
-  email: string;
+export type CreateUserPayload = Omit<User, "id" | "createdAt" | "status"> & {
   password: string;
-  role: string;
-}
+};
 
 export type UpdateUserPayload = Partial<CreateUserPayload>;

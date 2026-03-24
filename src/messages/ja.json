@@ -202,7 +202,11 @@
       "creating": "作成中…",
       "created": "ユーザーを追加しました。",
       "cropTitle": "画像を切り抜き",
-      "cropApply": "適用"
+      "cropApply": "適用",
+      "password": "パスワード",
+      "confirmPassword": "パスワード確認",
+      "passwordPlaceholder": "パスワードを入力してください",
+      "confirmPasswordPlaceholder": "パスワードを確認してください"
     },
     "deleteConfirm": {
       "titleOne": "ユーザーを削除",

@@ -5,7 +5,7 @@ export interface UploadResponse {
   key: string;
 }
 
-export const uploadFile = async (file: File) => {
+export const uploadImage = async (file: File) => {
   const formData = new FormData();
 
   formData.append("type", "image");

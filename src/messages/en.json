@@ -202,7 +202,11 @@
       "creating": "Creating…",
       "created": "User created.",
       "cropTitle": "Crop image",
-      "cropApply": "Apply"
+      "cropApply": "Apply",
+      "password": "Password",
+      "confirmPassword": "Confirm Password",
+      "passwordPlaceholder": "Enter password",
+      "confirmPasswordPlaceholder": "Confirm password"
     },
     "deleteConfirm": {
       "titleOne": "Delete user",
