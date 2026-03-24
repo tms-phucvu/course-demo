@@ -10,7 +10,15 @@ interface SortableLessonItemProps {
   id: string;
   lesson: LessonFormValues;
   index: number;
-  openEditDialog: (index: number, videoId: string) => void;
+  openEditDialog: ({
+    index,
+    title,
+    videoId,
+  }: {
+    index: number;
+    title: string;
+    videoId: string;
+  }) => void;
   remove: UseFieldArrayRemove;
 }
 
@@ -75,7 +83,13 @@ export function SortableLessonItem({
           type='button'
           variant='ghost'
           size='icon'
-          onClick={() => openEditDialog(index, lesson.videoId)}
+          onClick={() =>
+            openEditDialog({
+              index,
+              videoId: lesson.videoId,
+              title: lesson.title,
+            })
+          }
         >
           <Pencil className='h-4 w-4' />
         </Button>

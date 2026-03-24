@@ -16,6 +16,7 @@ import { toast } from "sonner";
 
 interface LessonDialogContentProps {
   videoUrl: string;
+  title?: string;
   onSave: (lessonValues: LessonFormValues) => void;
   onCancel: () => void;
   isAdd?: boolean;
@@ -23,33 +24,42 @@ interface LessonDialogContentProps {
 
 export function LessonDialogContent({
   videoUrl,
+  title = "",
   onSave,
   onCancel,
   isAdd = true,
 }: LessonDialogContentProps) {
   const { loading, error, fetchInfo } = useYoutubeVideoInfo();
+  const [titleInput, setTitleInput] = useState(title);
   const [urlInput, setUrlInput] = useState(videoUrl);
 
   useEffect(() => {
     setUrlInput(videoUrl);
-  }, [videoUrl]);
+    setTitleInput(title);
+  }, [videoUrl, title]);
 
   const handleSave = async () => {
     if (loading) return;
+    const trimmedTitle = titleInput.trim();
     const trimmedUrl = urlInput.trim();
     if (!trimmedUrl) {
       toast.error("Please enter URL!");
       return;
     }
-    if (!extractVideoId(trimmedUrl)) {
+    if (!trimmedTitle) {
+      toast.error("Please enter title!");
+      return;
+    }
+    const videoId = extractVideoId(trimmedUrl);
+    if (!videoId) {
       toast.error("Invalid Video URL");
       return;
     }
     const info = await fetchInfo(trimmedUrl);
-    if (info?.videoId && !loading && !error) {
+    if (info?.videoId) {
       onSave({
-        videoId: info.videoId,
-        title: info.title,
+        videoId,
+        title: trimmedTitle,
         duration: info.durationSeconds,
       });
     }
@@ -65,11 +75,24 @@ export function LessonDialogContent({
       </DialogHeader>
 
       <div className='space-y-4 py-4'>
+        {/* TITLE */}
+        <div className='space-y-2'>
+          <Label htmlFor='lesson-title'>Lesson Title</Label>
+          <Input
+            id='lesson-title'
+            autoFocus
+            placeholder='Enter lesson title'
+            value={titleInput}
+            onChange={(e) => setTitleInput(e.target.value)}
+            disabled={loading}
+          />
+        </div>
+
+        {/* URL */}
         <div className='space-y-2'>
           <Label htmlFor='lesson-url'>YouTube Video URL</Label>
           <Input
             id='lesson-url'
-            autoFocus
             placeholder='https://www.youtube.com/watch?v=xxxxxxxx'
             value={urlInput}
             onChange={(e) => setUrlInput(e.target.value)}
@@ -85,7 +108,10 @@ export function LessonDialogContent({
           Cancel
         </Button>
 
-        <Button onClick={handleSave} disabled={loading || !urlInput.trim()}>
+        <Button
+          onClick={handleSave}
+          disabled={loading || !urlInput.trim() || !titleInput.trim()}
+        >
           {loading && <Loader2 className='mr-2 h-4 w-4 animate-spin' />}
           {isAdd ? "Add Lesson" : "Save"}
         </Button>

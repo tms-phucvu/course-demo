@@ -36,6 +36,7 @@ export function LessonFields({ sectionIndex, control }: LessonFieldsProps) {
   const [openAdd, setOpenAdd] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
 
+  const [title, setTitle] = useState<string>("");
   const [videoId, setVideoId] = useState<string>("");
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
 
@@ -54,8 +55,17 @@ export function LessonFields({ sectionIndex, control }: LessonFieldsProps) {
     setOpenEdit(false);
   };
 
-  const openEditDialog = (index: number, videoId: string) => {
+  const openEditDialog = ({
+    index,
+    title,
+    videoId,
+  }: {
+    index: number;
+    title: string;
+    videoId: string;
+  }) => {
     setEditingIndex(index);
+    setTitle(title);
     setVideoId(videoId);
     setOpenEdit(true);
   };
@@ -123,6 +133,7 @@ export function LessonFields({ sectionIndex, control }: LessonFieldsProps) {
         <DialogContent>
           <LessonDialogContent
             videoUrl={`https://www.youtube.com/watch?v=${videoId}`}
+            title={title}
             onSave={handleEditLesson}
             onCancel={() => setOpenEdit(false)}
             isAdd={false}
