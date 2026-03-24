@@ -21,10 +21,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { cn } from "@/core/lib/utils";
 import { AddUserModal } from "@/features/user-management/components/add-user-modal";
 import { DeleteConfirmModal } from "@/features/user-management/components/delete-confirm-modal";
 import { EditUserModal } from "@/features/user-management/components/edit-user-modal";
+import UserStatusSwitch from "@/features/user-management/components/user-status-switch";
 import { useCreateUser } from "@/features/user-management/hooks/use-create-user";
 import { useDeleteManyUsers } from "@/features/user-management/hooks/use-delete-many-users";
 import { useDeleteUser } from "@/features/user-management/hooks/use-delete-user";
@@ -35,7 +35,7 @@ import {
   getInitials,
   getPageNumbers,
 } from "@/features/user-management/lib/user.util";
-import { User } from "@/features/user-management/types/user.types";
+import { User, UserStatus } from "@/features/user-management/types/user.types";
 import { Pencil, Search, Trash2, UserPlus } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -198,7 +198,7 @@ export function UserListTable() {
           name: user.name,
           email: user.email,
           role: user.role,
-          password: "changeme123",
+          password: "StrongPassword123",
         },
         {
           onSuccess: () => {
@@ -275,8 +275,8 @@ export function UserListTable() {
               </TableHead>
               <TableHead>{t("email")}</TableHead>
               <TableHead>{t("role")}</TableHead>
-              <TableHead>{t("status")}</TableHead>
               <TableHead>{t("createdAt")}</TableHead>
+              <TableHead>{t("activeStatus")}</TableHead>
               <TableHead className='bg-background group-hover:bg-muted/50 sticky right-0 z-10 w-24 min-w-24 text-right shadow-[-4px_0_6px_-2px_rgba(0,0,0,0.05)]'>
                 <span className='sr-only'>{t("actions")}</span>
               </TableHead>
@@ -321,27 +321,14 @@ export function UserListTable() {
                   <TableCell>
                     {t(`role_${user.role.toLocaleLowerCase()}`)}
                   </TableCell>
-                  <TableCell>
-                    {(() => {
-                      const statusValue = user.status ?? "active";
-                      const isActive = statusValue === "active";
-                      return (
-                        <span
-                          className={cn(
-                            "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium",
-                            isActive
-                              ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
-                              : "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400"
-                          )}
-                          role='status'
-                        >
-                          {t(`status_${statusValue}`)}
-                        </span>
-                      );
-                    })()}
-                  </TableCell>
                   <TableCell className='text-muted-foreground'>
                     {formatCreatedAt(user.createdAt)}
+                  </TableCell>
+                  <TableCell>
+                    <UserStatusSwitch
+                      id={user.id}
+                      isActive={user.status === UserStatus.ACTIVE}
+                    />
                   </TableCell>
                   <TableCell className='bg-background group-hover:bg-muted/50 sticky right-0 z-10 w-24 min-w-24 text-right shadow-[-4px_0_6px_-2px_rgba(0,0,0,0.05)]'>
                     <div className='flex items-center gap-1'>

@@ -31,7 +31,7 @@ import {
   AVATAR_VALIDATION,
   ROLES,
 } from "@/features/user-management/constants/user.constants";
-import { User } from "@/features/user-management/types/user.types";
+import { User, UserStatus } from "@/features/user-management/types/user.types";
 import {
   AddUserFormData,
   addUserSchema,
@@ -161,7 +161,7 @@ export function AddUserModal({
         avatarUrl: data.avatarUrl || undefined,
         email: data.email,
         role: data.role,
-        status: "active",
+        status: UserStatus.ACTIVE,
         createdAt: new Date().toISOString(),
       };
       onSuccess(newUser);
@@ -274,7 +274,7 @@ export function AddUserModal({
                     <select
                       {...field}
                       className={cn(
-                        "border-input flex h-9 w-full rounded-md border bg-transparent px-3 py-1 text-base shadow-sm transition-colors",
+                        "border-input bg-background flex h-9 w-full rounded-md border px-3 py-1 text-base shadow-sm transition-colors",
                         "focus-visible:ring-ring focus-visible:ring-1 focus-visible:outline-none",
                         "disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
                       )}

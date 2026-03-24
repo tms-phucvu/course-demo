@@ -1,8 +1,11 @@
 import { Role } from "@/features/auth/types";
-import type { User } from "../types/user.types";
+import { UserStatus, type User } from "../types/user.types";
 
 export const ROLES: User["role"][] = [Role.ADMIN, Role.STUDENT];
-export const STATUSES: User["status"][] = ["active", "inactive"];
+export const STATUSES: User["status"][] = [
+  UserStatus.ACTIVE,
+  UserStatus.INACTIVE,
+];
 
 export const AVATAR_VALIDATION = {
   maxSizeInMb: 2,

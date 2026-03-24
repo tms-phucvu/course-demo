@@ -1,7 +1,10 @@
 import { Role } from "@/features/auth/types";
 
 /** User status in the management list */
-export type UserStatus = "active" | "inactive";
+export enum UserStatus {
+  ACTIVE = "ACTIVE",
+  INACTIVE = "INACTIVE",
+}
 
 export interface User {
   id: string;
@@ -9,7 +12,7 @@ export interface User {
   avatarUrl?: string | null;
   email: string;
   role: Role;
-  status?: UserStatus;
+  status: UserStatus;
   createdAt: string;
 }
 

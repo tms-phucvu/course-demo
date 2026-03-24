@@ -171,7 +171,7 @@
     "name": "名前",
     "email": "メールアドレス",
     "role": "役割",
-    "status": "ステータス",
+    "activeStatus": "有効",
     "createdAt": "作成日時",
     "actions": "操作",
     "editUser": "{name} を編集",

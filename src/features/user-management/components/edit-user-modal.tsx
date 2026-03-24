@@ -287,7 +287,7 @@ export function EditUserModal({
                     <select
                       {...field}
                       className={cn(
-                        "border-input flex h-9 w-full rounded-md border bg-transparent px-3 py-1 text-base shadow-sm transition-colors",
+                        "border-input bg-background flex h-9 w-full rounded-md border px-3 py-1 text-base shadow-sm transition-colors",
                         "focus-visible:ring-ring focus-visible:ring-1 focus-visible:outline-none",
                         "disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
                       )}

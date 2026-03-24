@@ -171,7 +171,7 @@
     "name": "Name",
     "email": "Email",
     "role": "Role",
-    "status": "Status",
+    "activeStatus": "Active",
     "createdAt": "Created at",
     "actions": "Actions",
     "editUser": "Edit {name}",

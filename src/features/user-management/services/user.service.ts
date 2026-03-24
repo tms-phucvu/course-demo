@@ -5,6 +5,7 @@ import {
   User,
   UserFilters,
   UserListResponse,
+  UserStatus,
 } from "@/features/user-management/types/user.types";
 
 // GET ALL
@@ -55,4 +56,16 @@ export async function deleteUser(id: string): Promise<void> {
 // DELETE MANY USERS
 export async function deleteManyUsers(ids: string[]) {
   await Promise.all(ids.map((id) => deleteUser(id)));
+}
+
+// UPDATE USER STATUS
+export async function updateUserStatus(
+  id: string,
+  payload: { status: UserStatus }
+): Promise<User> {
+  const response = await apiClient.patch<User>(
+    `/admin/users/${id}/status`,
+    payload
+  );
+  return response.data;
 }
