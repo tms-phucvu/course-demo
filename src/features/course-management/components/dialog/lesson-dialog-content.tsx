@@ -7,9 +7,11 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useVideoDuration } from "@/features/course-management/hooks/use-video-duration";
 import { useYoutubeVideoInfo } from "@/features/course-management/hooks/use-youtube-video-info";
 import { LessonFormValues } from "@/features/course-management/schemas/lesson.schemas";
-import { extractVideoId } from "@/features/course-management/utils/youtube.utils";
+import { getSharePointDownloadLink } from "@/features/course-management/utils/sharepoint.utils";
+import { isValidYoutubeUrl } from "@/features/course-management/utils/youtube.utils";
 import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -30,6 +32,11 @@ export function LessonDialogContent({
   isAdd = true,
 }: LessonDialogContentProps) {
   const { loading, error, fetchInfo } = useYoutubeVideoInfo();
+  const {
+    loading: durationLoading,
+    error: durationError,
+    fetchDuration,
+  } = useVideoDuration();
   const [titleInput, setTitleInput] = useState(title);
   const [urlInput, setUrlInput] = useState(videoUrl);
 
@@ -50,17 +57,31 @@ export function LessonDialogContent({
       toast.error("Please enter title!");
       return;
     }
-    const videoId = extractVideoId(trimmedUrl);
-    if (!videoId) {
-      toast.error("Invalid Video URL");
-      return;
-    }
-    const info = await fetchInfo(trimmedUrl);
-    if (info?.videoId) {
+    if (trimmedUrl.includes("youtube")) {
+      if (!isValidYoutubeUrl(trimmedUrl)) {
+        toast.error("Invalid Youtube video URL");
+        return;
+      }
+      const info = await fetchInfo(trimmedUrl);
+      if (info?.videoId) {
+        onSave({
+          videoUrl: trimmedUrl,
+          title: trimmedTitle,
+          duration: info.durationSeconds,
+        });
+      }
+    } else {
+      const videoUrl = getSharePointDownloadLink(trimmedUrl);
+      if (!videoUrl) {
+        toast.error("Invalid SharePoint video URL");
+        return;
+      }
+      const duration = await fetchDuration(videoUrl);
+      if (!duration) return;
       onSave({
-        videoUrl: trimmedUrl,
+        videoUrl,
         title: trimmedTitle,
-        duration: info.durationSeconds,
+        duration,
       });
     }
   };
@@ -90,17 +111,23 @@ export function LessonDialogContent({
 
         {/* URL */}
         <div className='space-y-2'>
-          <Label htmlFor='lesson-url'>YouTube Video URL</Label>
+          <Label htmlFor='lesson-url'>Video URL</Label>
           <Input
             id='lesson-url'
-            placeholder='https://www.youtube.com/watch?v=xxxxxxxx'
+            placeholder='Enter video URL'
             value={urlInput}
             onChange={(e) => setUrlInput(e.target.value)}
             disabled={loading}
           />
+          <p className='text-muted-foreground text-xs'>
+            Supports YouTube and SharePoint video URLs only.
+          </p>
         </div>
 
         {error && <p className='text-destructive text-sm'>{error}</p>}
+        {durationError && (
+          <p className='text-destructive text-sm'>{durationError}</p>
+        )}
       </div>
 
       <DialogFooter>
@@ -110,9 +137,13 @@ export function LessonDialogContent({
 
         <Button
           onClick={handleSave}
-          disabled={loading || !urlInput.trim() || !titleInput.trim()}
+          disabled={
+            loading || durationLoading || !urlInput.trim() || !titleInput.trim()
+          }
         >
-          {loading && <Loader2 className='mr-2 h-4 w-4 animate-spin' />}
+          {(loading || durationLoading) && (
+            <Loader2 className='mr-2 h-4 w-4 animate-spin' />
+          )}
           {isAdd ? "Add Lesson" : "Save"}
         </Button>
       </DialogFooter>

@@ -1,23 +1,26 @@
-export const getSharePointDirectLink = (sharepointUrl: string): string => {
+export const getSharePointDownloadLink = (sharepointUrl: string): string => {
   try {
-    const url = new URL(sharepointUrl);
+    if (!sharepointUrl?.trim()) return "";
 
-    // 1. Get the 'id' parameter from the link (this is the internal path to the file)
+    const url = new URL(sharepointUrl.trim());
+
     const fileRelativePath = url.searchParams.get("id");
+    if (!fileRelativePath) return "";
 
-    if (!fileRelativePath) return sharepointUrl;
+    if (!url.pathname.includes("_layouts")) return "";
 
-    // 2. Build the base URL (e.g., https://tenant-my.sharepoint.com/personal/user_name_com/)
-    const baseUrl = `${url.origin}${url.pathname.split("_layouts")[0]}`;
+    const basePath = url.pathname.split("_layouts")[0];
+    if (!basePath) return "";
 
-    // 3. Combine with SharePoint's download endpoint
-    // Structure: [BaseURL]/_layouts/15/download.aspx?SourceUrl=[FilePath]
-    const directLink = `${baseUrl}_layouts/15/download.aspx?SourceUrl=${encodeURIComponent(fileRelativePath)}`;
+    const baseUrl = `${url.origin}${basePath}`;
+
+    const directLink = `${baseUrl}_layouts/15/download.aspx?SourceUrl=${encodeURIComponent(
+      fileRelativePath
+    )}`;
 
     return directLink;
-  } catch (error) {
-    console.error("Invalid SharePoint link format", error);
-    return sharepointUrl;
+  } catch {
+    return "";
   }
 };
 
