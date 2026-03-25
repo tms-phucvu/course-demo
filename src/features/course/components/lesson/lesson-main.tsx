@@ -100,16 +100,48 @@ function LessonMain({ selectedLessonId, courseId }: LessonMainProps) {
     <div className='w-full'>
       <div>
         <div className='aspect-video max-h-[min(80vh,800px)] w-full'>
-          <ReactPlayer
-            ref={playerRef}
-            src={selectedLesson.videoUrl}
-            controls
-            width='100%'
-            height='100%'
-            onClick={() => {
-              console.log(playerRef.current?.currentTime);
-            }}
-          />
+          {selectedLesson.videoUrl.includes("youtube") ? (
+            <ReactPlayer
+              ref={playerRef}
+              src={selectedLesson.videoUrl}
+              controls
+              width='100%'
+              height='100%'
+              onClick={() => {
+                console.log(playerRef.current?.currentTime);
+              }}
+            />
+          ) : (
+            <div
+              style={{
+                position: "relative",
+                paddingBottom: "56.25%",
+                height: 0,
+                overflow: "hidden",
+              }}
+            >
+              <iframe
+                src={selectedLesson.videoUrl}
+                width='1280'
+                height='720'
+                frameBorder='0'
+                scrolling='no'
+                allowFullScreen
+                title='YTSave.com_YouTube_Dan-dau-xu-huong-Tri-Tue-Nhan-Tao-AI-cun_Media_bOvxqoVhKW0_002_720p.mp4'
+                style={{
+                  border: "none",
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  height: "100%",
+                  width: "100%",
+                  maxWidth: "100%",
+                }}
+              ></iframe>
+            </div>
+          )}
         </div>
 
         <div className='flex flex-col items-center gap-4 rounded-b-xl border p-6 sm:flex-row'>

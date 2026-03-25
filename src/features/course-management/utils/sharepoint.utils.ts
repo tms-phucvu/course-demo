@@ -38,3 +38,19 @@ export const getVideoDuration = (url: string): Promise<number> => {
     video.onerror = () => reject("Cannot load video metadata");
   });
 };
+
+export const isValidSharePointEmbedLink = (urlString: string): boolean => {
+  try {
+    if (!urlString?.trim()) return false;
+
+    const url = new URL(urlString.trim());
+
+    const isSharePoint = url.hostname.includes("sharepoint.com");
+    const isEmbedPath = url.pathname.includes("_layouts/15/embed.aspx");
+    const uniqueId = url.searchParams.get("UniqueId");
+
+    return isSharePoint && isEmbedPath && !!uniqueId;
+  } catch {
+    return false;
+  }
+};

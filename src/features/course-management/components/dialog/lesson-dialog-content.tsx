@@ -7,10 +7,9 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useVideoDuration } from "@/features/course-management/hooks/use-video-duration";
 import { useYoutubeVideoInfo } from "@/features/course-management/hooks/use-youtube-video-info";
 import { LessonFormValues } from "@/features/course-management/schemas/lesson.schemas";
-import { getSharePointDownloadLink } from "@/features/course-management/utils/sharepoint.utils";
+import { isValidSharePointEmbedLink } from "@/features/course-management/utils/sharepoint.utils";
 import { isValidYoutubeUrl } from "@/features/course-management/utils/youtube.utils";
 import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -32,11 +31,11 @@ export function LessonDialogContent({
   isAdd = true,
 }: LessonDialogContentProps) {
   const { loading, error, fetchInfo } = useYoutubeVideoInfo();
-  const {
-    loading: durationLoading,
-    error: durationError,
-    fetchDuration,
-  } = useVideoDuration();
+  // const {
+  //   loading: durationLoading,
+  //   error: durationError,
+  //   fetchDuration,
+  // } = useVideoDuration();
   const [titleInput, setTitleInput] = useState(title);
   const [urlInput, setUrlInput] = useState(videoUrl);
 
@@ -71,17 +70,17 @@ export function LessonDialogContent({
         });
       }
     } else {
-      const videoUrl = getSharePointDownloadLink(trimmedUrl);
-      if (!videoUrl) {
+      //const videoUrl = getSharePointDownloadLink(trimmedUrl);
+      if (!isValidSharePointEmbedLink(trimmedUrl)) {
         toast.error("Invalid SharePoint video URL");
         return;
       }
-      const duration = await fetchDuration(videoUrl);
-      if (!duration) return;
+      //const duration = await fetchDuration(videoUrl);
+      //if (!duration) return;
       onSave({
-        videoUrl,
+        videoUrl: trimmedUrl,
         title: trimmedTitle,
-        duration,
+        duration: 300,
       });
     }
   };
@@ -125,9 +124,9 @@ export function LessonDialogContent({
         </div>
 
         {error && <p className='text-destructive text-sm'>{error}</p>}
-        {durationError && (
+        {/* {durationError && (
           <p className='text-destructive text-sm'>{durationError}</p>
-        )}
+        )} */}
       </div>
 
       <DialogFooter>
@@ -137,13 +136,9 @@ export function LessonDialogContent({
 
         <Button
           onClick={handleSave}
-          disabled={
-            loading || durationLoading || !urlInput.trim() || !titleInput.trim()
-          }
+          disabled={loading || !urlInput.trim() || !titleInput.trim()}
         >
-          {(loading || durationLoading) && (
-            <Loader2 className='mr-2 h-4 w-4 animate-spin' />
-          )}
+          {loading && <Loader2 className='mr-2 h-4 w-4 animate-spin' />}
           {isAdd ? "Add Lesson" : "Save"}
         </Button>
       </DialogFooter>
