@@ -4,11 +4,17 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import { Separator } from "@/components/ui/separator";
+import {
+  getSharePointDirectLink,
+  getVideoDuration,
+} from "@/features/course-management/utils/sharepoint.utils";
 import OverviewTab from "@/features/course/components/lesson-main-tab/overview-tab";
 import ResourcesTab from "@/features/course/components/lesson-main-tab/resources-tab";
 import ReviewsTab from "@/features/course/components/lesson-main-tab/reviews-tab";
 import { useCourseDetail } from "@/features/course/hooks/use-course-detail";
 import { Link } from "@/i18n";
+import { useRef } from "react";
+import ReactPlayer from "react-player";
 
 interface LessonMainProps {
   selectedLessonId: string;
@@ -17,6 +23,7 @@ interface LessonMainProps {
 
 function LessonMain({ selectedLessonId, courseId }: LessonMainProps) {
   const { data: course, isLoading, isError, error } = useCourseDetail(courseId);
+  const playerRef = useRef<HTMLVideoElement | null>(null);
 
   if (isLoading) {
     return (
@@ -93,15 +100,28 @@ function LessonMain({ selectedLessonId, courseId }: LessonMainProps) {
     ? `/courses/${courseId}/lessons/${nextLessonId}`
     : "#";
 
+  const videoUrl = getSharePointDirectLink(
+    `https://tomosiavn-my.sharepoint.com/personal/phuc_vu_tomosia_com/_layouts/15/stream.aspx?id=%2Fpersonal%2Fphuc%5Fvu%5Ftomosia%5Fcom%2FDocuments%2Fvid%2FYTSave%2Ecom%5FYouTube%5FKhoa%2DHoc%2DAI%2DKhoa%2DHoc%2DLam%2DVideo%2Dbang%2DAI%2DK%5FMedia%5FXgcf9t8PY%2Dk%5F002%5F720p%2Emp4&referrer=StreamWebApp%2EWeb&referrerScenario=AddressBarCopied%2Eview%2Eec6b0f8b%2Df02c%2D4944%2Dbefc%2Db0a6dc4bd9b7`
+  );
+  console.log("video url", videoUrl);
+
+  getVideoDuration(videoUrl).then((duration) => {
+    console.log("duration", duration);
+  });
+
   return (
     <div className='w-full'>
       <div>
-        <div className='w-full'>
-          <iframe
-            className='aspect-video max-h-[min(80vh,800px)] w-full'
-            src={`https://www.youtube.com/embed/${selectedLesson.videoUrl}?rel=0`}
-            title={selectedLesson.title}
-            allowFullScreen
+        <div className='aspect-video max-h-[min(80vh,800px)] w-full'>
+          <ReactPlayer
+            ref={playerRef}
+            src={`https://www.youtube.com/watch?v=${selectedLesson.videoUrl}`}
+            controls
+            width='100%'
+            height='100%'
+            onClick={() => {
+              console.log(playerRef.current?.currentTime);
+            }}
           />
         </div>
 
