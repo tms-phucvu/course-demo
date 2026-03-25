@@ -115,7 +115,7 @@ function LessonMain({ selectedLessonId, courseId }: LessonMainProps) {
         <div className='aspect-video max-h-[min(80vh,800px)] w-full'>
           <ReactPlayer
             ref={playerRef}
-            src={`https://www.youtube.com/watch?v=${selectedLesson.videoUrl}`}
+            src={selectedLesson.videoUrl}
             controls
             width='100%'
             height='100%'

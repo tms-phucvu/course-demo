@@ -37,18 +37,18 @@ export function LessonFields({ sectionIndex, control }: LessonFieldsProps) {
   const [openEdit, setOpenEdit] = useState(false);
 
   const [title, setTitle] = useState<string>("");
-  const [videoId, setVideoId] = useState<string>("");
+  const [videoUrl, setVideoUrl] = useState<string>("");
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
 
   const handleAddLesson = (lessonValues: LessonFormValues) => {
-    if (!lessonValues.videoId.trim()) return;
+    if (!lessonValues.videoUrl.trim()) return;
 
     append(lessonValues);
     setOpenAdd(false);
   };
 
   const handleEditLesson = (lessonValues: LessonFormValues) => {
-    if (editingIndex === null || !lessonValues.videoId.trim()) return;
+    if (editingIndex === null || !lessonValues.videoUrl.trim()) return;
 
     update(editingIndex, lessonValues);
     setEditingIndex(null);
@@ -58,15 +58,15 @@ export function LessonFields({ sectionIndex, control }: LessonFieldsProps) {
   const openEditDialog = ({
     index,
     title,
-    videoId,
+    videoUrl,
   }: {
     index: number;
     title: string;
-    videoId: string;
+    videoUrl: string;
   }) => {
     setEditingIndex(index);
     setTitle(title);
-    setVideoId(videoId);
+    setVideoUrl(videoUrl);
     setOpenEdit(true);
   };
 
@@ -132,7 +132,7 @@ export function LessonFields({ sectionIndex, control }: LessonFieldsProps) {
       <Dialog open={openEdit} onOpenChange={setOpenEdit}>
         <DialogContent>
           <LessonDialogContent
-            videoUrl={`https://www.youtube.com/watch?v=${videoId}`}
+            videoUrl={videoUrl}
             title={title}
             onSave={handleEditLesson}
             onCancel={() => setOpenEdit(false)}

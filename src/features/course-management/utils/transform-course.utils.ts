@@ -22,9 +22,9 @@ export const transformCoursePayload = (
     sections: data.sections.map((section, sectionIndex) => ({
       ...section,
       order: sectionIndex + 1,
-      lessons: section.lessons.map(({ videoId, ...lesson }, lessonIndex) => ({
+      lessons: section.lessons.map(({ videoUrl, ...lesson }, lessonIndex) => ({
         ...lesson,
-        videoUrl: videoId,
+        videoUrl: videoUrl,
         order: lessonIndex + 1,
       })),
     })),
@@ -57,7 +57,7 @@ export const transformCourseToForm = (
         id: lesson.id,
         title: lesson.title,
         duration: lesson.duration,
-        videoId: lesson.videoUrl,
+        videoUrl: lesson.videoUrl,
       })),
     })),
   };

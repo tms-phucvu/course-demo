@@ -13,11 +13,11 @@ interface SortableLessonItemProps {
   openEditDialog: ({
     index,
     title,
-    videoId,
+    videoUrl,
   }: {
     index: number;
     title: string;
-    videoId: string;
+    videoUrl: string;
   }) => void;
   remove: UseFieldArrayRemove;
 }
@@ -65,16 +65,12 @@ export function SortableLessonItem({
       <div className='flex flex-1 flex-col'>
         <span className='text-sm font-semibold'>{lesson.title}</span>
         <span className='text-muted-foreground text-xs'>
-          {`${formatVideoDuration(lesson.duration)} • ${lesson.videoId}`}
+          {`${formatVideoDuration(lesson.duration)} • ${lesson.videoUrl}`}
         </span>
       </div>
 
       <div className='flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100'>
-        <a
-          href={`https://www.youtube.com/watch?v=${lesson.videoId}`}
-          target='_blank'
-          rel='noopener noreferrer'
-        >
+        <a href={lesson.videoUrl} target='_blank' rel='noopener noreferrer'>
           <Button type='button' variant='ghost' size='icon'>
             <Eye className='h-4 w-4' />
           </Button>
@@ -86,7 +82,7 @@ export function SortableLessonItem({
           onClick={() =>
             openEditDialog({
               index,
-              videoId: lesson.videoId,
+              videoUrl: lesson.videoUrl,
               title: lesson.title,
             })
           }
