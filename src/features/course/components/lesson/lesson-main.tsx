@@ -112,35 +112,21 @@ function LessonMain({ selectedLessonId, courseId }: LessonMainProps) {
               }}
             />
           ) : (
-            <div
+            <iframe
+              src={selectedLesson.videoUrl}
+              width='1280'
+              height='720'
+              frameBorder='0'
+              scrolling='no'
+              allowFullScreen
+              title='YTSave.com_YouTube_Dan-dau-xu-huong-Tri-Tue-Nhan-Tao-AI-cun_Media_bOvxqoVhKW0_002_720p.mp4'
               style={{
-                position: "relative",
-                paddingBottom: "56.25%",
-                height: 0,
-                overflow: "hidden",
+                border: "none",
+                height: "100%",
+                width: "100%",
+                maxWidth: "100%",
               }}
-            >
-              <iframe
-                src={selectedLesson.videoUrl}
-                width='1280'
-                height='720'
-                frameBorder='0'
-                scrolling='no'
-                allowFullScreen
-                title='YTSave.com_YouTube_Dan-dau-xu-huong-Tri-Tue-Nhan-Tao-AI-cun_Media_bOvxqoVhKW0_002_720p.mp4'
-                style={{
-                  border: "none",
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  height: "100%",
-                  width: "100%",
-                  maxWidth: "100%",
-                }}
-              ></iframe>
-            </div>
+            ></iframe>
           )}
         </div>
 
