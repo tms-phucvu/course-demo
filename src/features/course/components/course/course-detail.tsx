@@ -82,7 +82,9 @@ export default function CourseDetail({ courseId }: CourseDetailProps) {
             <h1 className='text-3xl font-semibold tracking-tight sm:text-4xl'>
               {course.title}
             </h1>
-            <p className='text-muted-foreground'>{course.description}</p>
+            <p className='text-muted-foreground whitespace-pre-line'>
+              {course.description}
+            </p>
             <div className='text-muted-foreground text-sm'>
               Language course is{" "}
               <span className='text-foreground font-medium'>
