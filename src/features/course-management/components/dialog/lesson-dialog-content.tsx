@@ -64,7 +64,7 @@ export function LessonDialogContent({
       const info = await fetchInfo(trimmedUrl);
       if (info?.videoId) {
         onSave({
-          videoUrl: trimmedUrl,
+          videoUrl: `https://www.youtube.com/watch?v=${info.videoId}`,
           title: trimmedTitle,
           duration: info.durationSeconds,
         });
