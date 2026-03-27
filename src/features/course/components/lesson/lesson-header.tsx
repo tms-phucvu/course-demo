@@ -15,7 +15,7 @@ export default function LessonHeader({
   setIsOpenSidebar,
 }: LessonHeaderProps) {
   return (
-    <div className='bg-background fixed top-0 flex w-full items-center justify-between gap-4 px-6 py-4 shadow-2xs'>
+    <div className='bg-background fixed top-0 z-99 flex w-full items-center justify-between gap-4 px-6 py-4 shadow-2xs'>
       <Link href={`../`} className='self-start'>
         <Button variant={"ghost"}>
           <ChevronLeft />

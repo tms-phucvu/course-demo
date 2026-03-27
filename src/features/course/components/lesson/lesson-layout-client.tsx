@@ -63,7 +63,7 @@ export default function LessonLayoutClient({
 
       <div
         className={cn(
-          "mt-36 p-4 transition-all duration-300 ease-in-out sm:mt-17",
+          "mt-36 p-4 transition-all duration-300 ease-in-out sm:mt-14",
           isOpenSidebar && "sm:mr-[25%]"
         )}
       >

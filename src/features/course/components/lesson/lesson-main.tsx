@@ -4,13 +4,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import { Separator } from "@/components/ui/separator";
+import { extractVideoId } from "@/features/course-management/utils/youtube.utils";
 import OverviewTab from "@/features/course/components/lesson-main-tab/overview-tab";
 import ResourcesTab from "@/features/course/components/lesson-main-tab/resources-tab";
 import ReviewsTab from "@/features/course/components/lesson-main-tab/reviews-tab";
+import PlyrVideo from "@/features/course/components/ui/plyr-video";
 import { useCourseDetail } from "@/features/course/hooks/use-course-detail";
 import { Link } from "@/i18n";
-import { useRef } from "react";
-import ReactPlayer from "react-player";
 
 interface LessonMainProps {
   selectedLessonId: string;
@@ -19,7 +19,6 @@ interface LessonMainProps {
 
 function LessonMain({ selectedLessonId, courseId }: LessonMainProps) {
   const { data: course, isLoading, isError, error } = useCourseDetail(courseId);
-  const playerRef = useRef<HTMLVideoElement | null>(null);
 
   if (isLoading) {
     return (
@@ -95,23 +94,14 @@ function LessonMain({ selectedLessonId, courseId }: LessonMainProps) {
   const nextHref = nextLessonId
     ? `/courses/${courseId}/lessons/${nextLessonId}`
     : "#";
-
+  const videoId = extractVideoId(selectedLesson.videoUrl);
   return (
     <div className='w-full'>
       <div>
-        <div className='aspect-video max-h-[min(80vh,800px)] w-full'>
-          {selectedLesson.videoUrl.includes("youtube") ? (
-            <ReactPlayer
-              ref={playerRef}
-              src={selectedLesson.videoUrl}
-              controls
-              width='100%'
-              height='100%'
-              onClick={() => {
-                console.log(playerRef.current?.currentTime);
-              }}
-            />
-          ) : (
+        {selectedLesson.videoUrl.includes("youtube") && videoId ? (
+          <PlyrVideo src={videoId} />
+        ) : (
+          <div className='aspect-video max-h-[min(80vh,800px)] w-full'>
             <iframe
               src={selectedLesson.videoUrl}
               width='1280'
@@ -127,8 +117,8 @@ function LessonMain({ selectedLessonId, courseId }: LessonMainProps) {
                 maxWidth: "100%",
               }}
             ></iframe>
-          )}
-        </div>
+          </div>
+        )}
 
         <div className='flex flex-col items-center gap-4 rounded-b-xl border p-6 sm:flex-row'>
           <div className='flex-1 text-lg font-semibold'>
